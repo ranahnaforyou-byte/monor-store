@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#eef1ef"/>
+  <path d="M250 380c40-70 120-120 200-120s150 40 180 90" fill="none" stroke="#cfd6d1" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="400" cy="270" r="46" fill="#cfd6d1"/>
+  <text x="400" y="470" font-family="sans-serif" font-size="30" fill="#9aa39d" text-anchor="middle">MONOR STORE</text>
+</svg>
