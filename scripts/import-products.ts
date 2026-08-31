@@ -18,6 +18,7 @@ import { existsSync } from "node:fs";
 import { PrismaClient } from "../src/generated/prisma";
 import { processProductImage } from "../src/lib/images/process";
 import { getStorage } from "../src/lib/images/storage";
+import { archiveOriginalImage } from "../src/lib/drive/archive";
 
 const db = new PrismaClient();
 
@@ -97,11 +98,14 @@ async function main() {
     const processed = await processProductImage(buf);
     const key = `products/${product.id}/main.${processed.ext}`;
     const url = await storage.put(key, processed.buffer, processed.contentType);
+    const mime = file.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg";
+    const driveFileId = await archiveOriginalImage(product.id, file, buf, mime);
     await db.productImage.create({
       data: {
         productId: product.id,
         url,
         storageKey: key,
+        driveFileId,
         alt: product.name,
         position: 0,
         width: processed.width,

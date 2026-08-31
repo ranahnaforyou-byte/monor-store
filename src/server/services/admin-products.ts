@@ -4,6 +4,7 @@ import { slugify } from "@/lib/utils";
 import { revalidateMany, tags } from "@/lib/cache";
 import { processProductImage } from "@/lib/images/process";
 import { getStorage } from "@/lib/images/storage";
+import { archiveOriginalImage } from "@/lib/drive/archive";
 import type { Prisma, ProductStatus } from "@/generated/prisma";
 
 export type AdminProductInput = {
@@ -223,12 +224,21 @@ export async function addProductImage(productId: string, file: File, adminId: st
   const key = `products/${productId}/${crypto.randomUUID()}.${processed.ext}`;
   const url = await storage.put(key, processed.buffer, processed.contentType);
 
+  // Archive the untouched original to Google Drive (no-op if Drive unconfigured).
+  const driveFileId = await archiveOriginalImage(
+    productId,
+    file.name || `${key.split("/").pop()}`,
+    buf,
+    file.type || "application/octet-stream",
+  );
+
   const count = await db.productImage.count({ where: { productId } });
   const image = await db.productImage.create({
     data: {
       productId,
       url,
       storageKey: key,
+      driveFileId,
       alt: "",
       position: count,
       width: processed.width,

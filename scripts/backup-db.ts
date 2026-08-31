@@ -10,9 +10,11 @@
  */
 import { spawn } from "node:child_process";
 import { createWriteStream } from "node:fs";
-import { mkdir, readdir, stat, unlink } from "node:fs/promises";
+import { mkdir, readdir, readFile, stat, unlink } from "node:fs/promises";
 import { createGzip } from "node:zlib";
 import path from "node:path";
+import { drive } from "../src/lib/drive/client";
+import { rootSubfolder } from "../src/lib/drive/archive";
 
 const OUT_DIR = path.join(process.cwd(), "backups");
 const KEEP_DAILY = 30;
@@ -53,8 +55,17 @@ async function main() {
   console.log(`✓ backup ${(size / 1024).toFixed(0)} KB`);
   await pruneOld();
 
-  if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64 && process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID) {
-    console.log("→ Google Drive upload: implemented in Phase 7 (src/lib/drive).");
+  if (drive.isConfigured()) {
+    try {
+      const backups = await rootSubfolder("backups");
+      const dbFolder = await drive.ensureFolder("db", backups!);
+      const body = await readFile(outPath);
+      const file = await drive.uploadFile(path.basename(outPath), body, "application/gzip", dbFolder);
+      console.log(`→ uploaded to Google Drive (id ${file.id})`);
+    } catch (err) {
+      console.error("→ Google Drive upload failed:", (err as Error).message);
+      process.exitCode = 1;
+    }
   } else {
     console.log("→ Google Drive not configured; backup kept locally only.");
   }

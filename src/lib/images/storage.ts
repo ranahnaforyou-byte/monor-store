@@ -1,17 +1,17 @@
 import { mkdir, writeFile, unlink } from "node:fs/promises";
 import path from "node:path";
+import { AwsClient } from "aws4fetch";
 
 /**
  * Storage abstraction for web-optimized product images.
  *
- * - Local disk (default): writes to public/uploads, served by Next directly.
- *   Used until a real bucket is provisioned so the app runs end-to-end now.
- * - Cloudflare R2 (when R2_* env is set): implemented in Phase 7 (media
- *   pipeline). The interface below is the seam — nothing else in the app
- *   changes when storage is swapped.
+ * - Cloudflare R2 (when every R2_* var is set): S3-compatible, zero egress.
+ * - Local disk (fallback): writes to public/uploads, served by Next directly,
+ *   so the app runs end-to-end before a bucket is provisioned.
  *
- * Reads `process.env` directly (not the validated env module) so scripts and
- * the image pipeline can run without the full server env being present.
+ * Nothing else in the app changes when storage is swapped — this is the seam.
+ * Reads `process.env` directly so scripts and the pipeline run without the full
+ * validated server env.
  */
 export interface ObjectStorage {
   put(key: string, body: Buffer, contentType: string): Promise<string>;
@@ -21,10 +21,14 @@ export interface ObjectStorage {
 
 const LOCAL_DIR = path.join(process.cwd(), "public", "uploads");
 
-function r2Configured(): boolean {
-  return Boolean(
-    process.env.R2_ACCESS_KEY_ID && process.env.R2_BUCKET && process.env.R2_PUBLIC_BASE_URL,
-  );
+function r2Env() {
+  const accountId = process.env.R2_ACCOUNT_ID ?? "";
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID ?? "";
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY ?? "";
+  const bucket = process.env.R2_BUCKET ?? "";
+  const publicBase = (process.env.R2_PUBLIC_BASE_URL ?? "").replace(/\/$/, "");
+  const ready = Boolean(accountId && accessKeyId && secretAccessKey && bucket && publicBase);
+  return { accountId, accessKeyId, secretAccessKey, bucket, publicBase, ready };
 }
 
 const localStorage: ObjectStorage = {
@@ -46,25 +50,36 @@ const localStorage: ObjectStorage = {
   },
 };
 
-const r2NotConfigured: ObjectStorage = {
-  put() {
-    throw new Error(
-      "R2 storage selected but not fully configured. Set R2_* env vars or unset them to use local disk.",
-    );
-  },
-  delete() {
-    return Promise.resolve();
-  },
-  url(key) {
-    return `${(process.env.R2_PUBLIC_BASE_URL ?? "").replace(/\/$/, "")}/${key}`;
-  },
-};
+function makeR2(): ObjectStorage {
+  const { accountId, accessKeyId, secretAccessKey, bucket, publicBase } = r2Env();
+  const endpoint = `https://${accountId}.r2.cloudflarestorage.com/${bucket}`;
+  const aws = new AwsClient({ accessKeyId, secretAccessKey, service: "s3", region: "auto" });
+
+  return {
+    async put(key, body, contentType) {
+      const res = await aws.fetch(`${endpoint}/${encodeURI(key)}`, {
+        method: "PUT",
+        body: new Uint8Array(body),
+        headers: { "Content-Type": contentType, "Cache-Control": "public, max-age=31536000, immutable" },
+      });
+      if (!res.ok) {
+        throw new Error(`R2 put ${key} failed: ${res.status} ${await res.text().catch(() => "")}`);
+      }
+      return `${publicBase}/${key.replace(/\\/g, "/")}`;
+    },
+    async delete(key) {
+      await aws.fetch(`${endpoint}/${encodeURI(key)}`, { method: "DELETE" }).catch(() => {});
+    },
+    url(key) {
+      return `${publicBase}/${key.replace(/\\/g, "/")}`;
+    },
+  };
+}
 
 export function getStorage(): ObjectStorage {
-  // R2 implementation lands in Phase 7; until then local disk is authoritative.
-  return r2Configured() ? r2NotConfigured : localStorage;
+  return r2Env().ready ? makeR2() : localStorage;
 }
 
 export function usingLocalStorage(): boolean {
-  return !r2Configured();
+  return !r2Env().ready;
 }
