@@ -1,10 +1,28 @@
 # MONOR STORE — Project Status
 
-_Last updated: 2026-08-30_
+_Last updated: 2026-09-02_
 
-Production football-shoe store for Algeria. Single Next.js 16 app, PostgreSQL + Prisma,
-Arabic-first (RTL), Cash on Delivery, admin at `/admin`. Built data-driven for 50 → hundreds
-of products with no code changes.
+Production football-shoe store for Algeria. **ONE Next.js 16 app — one codebase, one database,
+one site.** The public storefront lives at `/`, the store-owner panel at `/admin` (RBAC-gated),
+in the same project. There is no second project, no separate admin app, no separate
+"developer" copy. PostgreSQL + Prisma, Arabic-first (RTL), Cash on Delivery. Data-driven for
+50 → hundreds of products with no code changes.
+
+## Current state (2026-09-02)
+
+- `npm run build` · `npm run typecheck` · `npm run lint` — all green.
+- **DEMO / client-review phase active**: 40 test products (fake DZD prices), storefront shows a
+  "وضع عرض تجريبي" banner + "تجريبي" tag on every price while `NEXT_PUBLIC_DEMO_MODE=1`.
+  Flip that env var to `0` (and run `npm run clear:demo`, then add real products) for production.
+- Verified end-to-end this pass: all storefront + admin routes 200; `/admin/*` → 307 to login
+  for anonymous visitors; add-to-cart → cart → checkout (COD) creates an order + OrderItem +
+  InventoryMovement + Customer (upsert by phone); order shows in `/admin/orders`; editing a
+  product price in `/admin` shows on the storefront on the next request.
+- Fixed this pass: (1) `/checkout` was stuck on the loading skeleton — the global
+  `(store)/loading.tsx` Suspense fallback never resolved for the `force-dynamic` route;
+  scoped `loading.tsx` to `/products` + `/categories`. (2) Admin edits were not visible on the
+  storefront — `revalidateTag(tag,"max")` is long stale-while-revalidate; switched admin-mutation
+  cache busting to `updateTag()` (immediate, read-your-writes).
 
 ---
 
@@ -20,23 +38,31 @@ of products with no code changes.
 | `middleware.ts` | now **`src/proxy.ts`** | Next 16 renamed the convention; Node runtime |
 | i18n | hand-rolled dictionaries (`src/messages/ar.json` / `fr.json`) | Arabic default; FR gated behind `NEXT_PUBLIC_ENABLE_FRENCH` so storefront stays statically optimizable until FR is turned on |
 | Local DB | `embedded-postgres` (Postgres 18, UTF-8) via `npm run db:up` | no Docker on the build machine; production uses a real managed Postgres via `DATABASE_URL` |
-| Image storage | local disk (`public/uploads`) behind `ObjectStorage` interface | Cloudflare R2 implementation is the Phase 7 task; the seam already exists |
+| Image storage | local disk (`public/uploads`) behind `ObjectStorage` interface | Cloudflare R2 implemented; activates when `R2_*` env is set |
 
-## How to run locally
+## How to run locally (DEMO)
 
 ```bash
 npm install
-npm run db:up          # start local Postgres (keep this shell open)
-npm run db:migrate     # apply migrations
-npm run db:seed        # owner account + settings + 58 wilayas + categories
-npm run import:products # import the 7 supplied images as products
-npm run dev
+npm run db:up          # local Postgres — keep this shell open
+npm run db:migrate     # apply migrations   (first time only)
+npm run db:seed        # owner account + store settings + 58 wilayas + categories
+npm run seed:demo      # 40 demo products with fake DZD prices  (or: -- --fresh)
+npm run dev            # http://localhost:3000
 ```
 
-Admin: `http://localhost:3000/admin/login` — `admin@monor.store` / `MonorAdmin!2026`
-(**change immediately after first login**).
+- Storefront: `http://localhost:3000`
+- Owner panel: `http://localhost:3000/admin/login` — `admin@monor.store` / `MonorAdmin!2026`
+  (**change after first login**)
+- `npm run check` = typecheck + lint · `npm run build && npm start` = production mode
+- `npm run clear:demo` removes every demo/placeholder product (+ image files) for real data.
 
-`npm run check` = typecheck + lint. `npm run build` = production build.
+### Going to production later (do NOT run now)
+
+`DEMO → GitHub repo → Hosting → Domain → Yalidine API → Payment` — each is a separate,
+explicit step. When the time comes: push the single repo to GitHub, provision a managed
+Postgres, set env vars (names in `.env.example`), `npm run db:deploy`, `npm run clear:demo`,
+add real products from `/admin`, set `NEXT_PUBLIC_DEMO_MODE=0`. No structural change needed.
 
 ---
 

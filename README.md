@@ -28,14 +28,21 @@ npm run db:up
 cp .env.example .env.local        # then fill in the required values
 npm run db:migrate                # apply migrations
 npm run db:seed                   # owner account, store settings, 58 wilayas, categories
-npm run import:products           # import the 7 supplied product images
+npm run seed:demo                 # 40 demo products with fake DZD prices (client review)
 npm run dev                       # http://localhost:3000
 ```
 
 Default admin (from the seed — **change after first login**):
 `admin@monor.store` / `MonorAdmin!2026`
 
+**DEMO / client-review mode** is on while `NEXT_PUBLIC_DEMO_MODE=1` (storefront shows a
+"prices are test data" banner + a "تجريبي" tag on every price). Set it to `0` for production.
+`npm run clear:demo` deletes every demo/placeholder product (+ image files) so you can load
+real data. `npm run seed:demo -- --fresh` re-generates the 40 from scratch.
+
 Production uses a real managed Postgres — set `DATABASE_URL` and run `npm run db:deploy`.
+This is **one repository / one codebase / one database** — the `(store)` and `(admin)` route
+groups are the same Next.js app. Do not split it.
 
 ## Scripts
 
@@ -48,8 +55,10 @@ Production uses a real managed Postgres — set `DATABASE_URL` and run `npm run 
 | `npm run db:migrate` / `db:deploy` | Prisma migrate (dev / prod) |
 | `npm run db:seed` | Seed reference data + owner account |
 | `npm run db:studio` | Prisma Studio |
-| `npm run import:products -- <folder>` | Batch-import product images (idempotent; re-run as more are added) |
-| `npm run backup:db` | `pg_dump` → gzip → `./backups` (Drive upload: Phase 6) |
+| `npm run seed:demo [-- --fresh]` | 40 demo products (fake DZD prices) from `./demo-assets` |
+| `npm run clear:demo` | Delete every demo/placeholder product + image files |
+| `npm run import:products -- <folder>` | Batch-import real product images (idempotent) |
+| `npm run backup:db` | `pg_dump` → gzip → `./backups` (+ Google Drive when configured) |
 
 ## Environment
 
