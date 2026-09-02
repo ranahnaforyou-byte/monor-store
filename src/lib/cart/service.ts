@@ -3,34 +3,9 @@ import { cache } from "react";
 import { db } from "@/lib/db";
 import { readCartCookie } from "./store";
 import { lineKey } from "./store";
-import type { CartLine } from "./types";
+import type { CartLine, ResolvedCart, ResolvedCartItem } from "./types";
 
-export type ResolvedCartItem = {
-  key: string;
-  productId: string;
-  slug: string;
-  name: string;
-  brand: string;
-  image: string | null;
-  blurDataURL: string | null;
-  size: string;
-  color: string | null;
-  unitPrice: number; // centimes, live from DB
-  compareAtPrice: number | null;
-  quantity: number; // clamped to available stock
-  requestedQuantity: number;
-  availableForSize: number;
-  lineTotal: number;
-  adjusted: boolean; // qty was clamped
-  unavailable: boolean; // product gone / inactive / size 0
-};
-
-export type ResolvedCart = {
-  items: ResolvedCartItem[];
-  itemCount: number;
-  subtotal: number;
-  hasIssues: boolean;
-};
+export type { ResolvedCart, ResolvedCartItem } from "./types";
 
 /** Resolve the cookie cart against the DB. NEVER trusts cookie prices/stock. */
 export const resolveCart = cache(async (): Promise<ResolvedCart> => {

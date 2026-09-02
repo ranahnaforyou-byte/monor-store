@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { formatDZD } from "@/lib/money";
 import { Button } from "@/components/ui/button";
 import { updateCartLine, removeCartLine } from "@/app/actions/cart";
-import type { ResolvedCart } from "@/lib/cart/service";
+import type { ResolvedCart } from "@/lib/cart/types";
 
 type Labels = {
   size: string;

@@ -7,7 +7,7 @@ import { formatDZD } from "@/lib/money";
 import { Input, Textarea, Select, Label } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 import { placeOrder, type CheckoutState } from "@/app/actions/checkout";
-import type { ResolvedCart } from "@/lib/cart/service";
+import type { ResolvedCart } from "@/lib/cart/types";
 
 type Wilaya = { code: number; name: string; nameAr: string };
 type Commune = { name: string; nameAr: string; hasStopDesk: boolean };

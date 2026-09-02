@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { AnnouncementBar } from "@/components/layout/announcement-bar";
+import { DemoBanner } from "@/components/layout/demo-banner";
 import { getStoreSettings } from "@/server/services/settings";
 
 export default async function StoreLayout({
@@ -21,6 +22,7 @@ export default async function StoreLayout({
 
   return (
     <div className="flex min-h-dvh flex-col">
+      <DemoBanner />
       {settings.announcementActive && <AnnouncementBar text={settings.announcementBar} />}
       <Header />
       <main className="flex-1">{children}</main>

@@ -54,3 +54,7 @@ next-env.d.ts
 # backups produced by scripts
 /backups
 
+# demo / client-review source images (throwaway — not committed)
+/demo-assets
+/initial-products
+

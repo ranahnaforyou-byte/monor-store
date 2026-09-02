@@ -21,7 +21,9 @@
     "db:reset": "prisma migrate reset",
     "import:products": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --tsconfig tsconfig.scripts.json scripts/import-products.ts",
     "sync:drive": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --tsconfig tsconfig.scripts.json scripts/sync-drive-images.ts",
-    "backup:db": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --tsconfig tsconfig.scripts.json scripts/backup-db.ts"
+    "backup:db": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --tsconfig tsconfig.scripts.json scripts/backup-db.ts",
+    "seed:demo": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --tsconfig tsconfig.scripts.json scripts/seed-demo.ts",
+    "clear:demo": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --tsconfig tsconfig.scripts.json scripts/clear-demo.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

@@ -6,6 +6,7 @@ import { getStoreSettings } from "./settings";
 import { resolveLines } from "@/lib/cart/service";
 import { readCartCookie } from "@/lib/cart/store";
 import { randomDigits } from "@/lib/utils";
+import type { CartLine } from "@/lib/cart/types";
 import type { Prisma } from "@/generated/prisma";
 
 export const checkoutSchema = z.object({
@@ -34,7 +35,17 @@ function makeReference(): string {
   return `MNR-${yy}-${randomDigits(6)}`;
 }
 
-export async function createOrder(rawInput: unknown): Promise<CreateOrderResult> {
+/**
+ * @param rawInput   checkout form fields (validated with `checkoutSchema`)
+ * @param cartLines  optional pre-resolved cart lines. When omitted the lines are
+ *                   read from the `monor_cart` cookie (the storefront path).
+ *                   Passing them explicitly is the seam for a future API / mobile
+ *                   client and for integration tests.
+ */
+export async function createOrder(
+  rawInput: unknown,
+  cartLines?: CartLine[],
+): Promise<CreateOrderResult> {
   const parsed = checkoutSchema.safeParse(rawInput);
   if (!parsed.success) {
     const first = parsed.error.issues[0];
@@ -51,7 +62,7 @@ export async function createOrder(rawInput: unknown): Promise<CreateOrderResult>
   }
 
   // Re-resolve the cart from scratch: live prices, live stock. Never trust client.
-  const lines = await readCartCookie();
+  const lines = cartLines ?? (await readCartCookie());
   const cart = await resolveLines(lines);
   const purchasable = cart.items.filter((i) => !i.unavailable && i.quantity > 0);
   if (purchasable.length === 0) {

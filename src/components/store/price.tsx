@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { formatDZD, discountPercent } from "@/lib/money";
+import { publicEnv } from "@/lib/public-env";
 
 export function Price({
   price,
@@ -35,6 +36,11 @@ export function Price({
             −{pct}%
           </span>
         </>
+      )}
+      {publicEnv.demoMode && (
+        <span className="rounded bg-[#fdf3e0] px-1.5 py-0.5 text-[10px] font-bold text-[#8a5a00]">
+          تجريبي
+        </span>
       )}
     </span>
   );
