@@ -23,26 +23,34 @@ a real production shop is the same deployment with different env values +
 
 ---
 
-## 2. Set up the schema + data on Neon (run once, from your PC)
+## 2. Schema + data
 
-In a terminal in the project folder, run each command with the Neon URL in
-front of it (replace `<NEON_URL>` with the string from step 1, keep the quotes):
+Two ways, pick one:
+
+**A — from your PC** (only if your network allows outbound TCP :5432; many
+mobile / Algerian ISPs block it):
 
 ```bash
 DATABASE_URL="<NEON_URL>" npm run db:deploy
 DATABASE_URL="<NEON_URL>" SEED_ADMIN_EMAIL="you@example.com" SEED_ADMIN_PASSWORD="ChooseAStrongPass1!" npm run db:seed
 DATABASE_URL="<NEON_URL>" npm run seed:demo -- --fresh
 ```
+PowerShell: `$env:DATABASE_URL="<NEON_URL>"; npm run db:deploy` (repeat per line).
 
-- `db:deploy` creates all tables on Neon.
-- `db:seed` creates the owner admin account (**use your own email + password**),
-  store settings, the 58 wilayas + communes, and the 4 categories.
-- `seed:demo` inserts the 40 demo products. Their images already live in the repo
-  at `public/uploads/demo/`, so they will show on Vercel with no object storage.
+**B — let Vercel do it (recommended if :5432 is blocked):**
+- Migrations run automatically during the Vercel build (`vercel-build` →
+  `prisma migrate deploy`), because Vercel's network is unrestricted.
+- After the first deploy, open **once** in your browser:
+  ```
+  https://<your-project>.vercel.app/api/setup?key=<CRON_SECRET>
+  ```
+  That creates the admin account (from `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`
+  env vars), store settings, the 58 wilayas + communes, categories, and the 40
+  demo products. It's idempotent — safe to call again. Add `&fresh=1` to rebuild
+  the demo products, or `&demo=0` for core data only.
 
-> PowerShell syntax instead of `VAR="..." cmd`:
-> `$env:DATABASE_URL="<NEON_URL>"; npm run db:deploy` (repeat per command, and
-> also `$env:SEED_ADMIN_PASSWORD="..."` before the seed).
+The demo images already live in the repo at `public/uploads/demo/`, so they show
+on Vercel with no object storage.
 
 ---
 
