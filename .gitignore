@@ -49,7 +49,10 @@ next-env.d.ts
 /.pg-run
 
 # local processed image fallback + uploads
-/public/uploads
+# (admin uploads + imported product images stay out of git; the DEMO images are
+#  committed so the Vercel review deployment has pictures without object storage)
+/public/uploads/*
+!/public/uploads/demo/
 
 # backups produced by scripts
 /backups
