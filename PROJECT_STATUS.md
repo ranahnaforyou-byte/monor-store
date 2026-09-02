@@ -52,7 +52,7 @@ npm run dev            # http://localhost:3000
 ```
 
 - Storefront: `http://localhost:3000`
-- Owner panel: `http://localhost:3000/admin/login` — `admin@monor.store` / `MonorAdmin!2026`
+- Owner panel: `http://localhost:3000/admin/login` — `admin@monor.store` / password printed by `npm run db:seed` (or `SEED_ADMIN_PASSWORD`)
   (**change after first login**)
 - `npm run check` = typecheck + lint · `npm run build && npm start` = production mode
 - `npm run clear:demo` removes every demo/placeholder product (+ image files) for real data.

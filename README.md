@@ -33,7 +33,7 @@ npm run dev                       # http://localhost:3000
 ```
 
 Default admin (from the seed — **change after first login**):
-`admin@monor.store` / `MonorAdmin!2026`
+`admin@monor.store` / the password `npm run db:seed` prints (or set `SEED_ADMIN_PASSWORD` before seeding)
 
 **DEMO / client-review mode** is on while `NEXT_PUBLIC_DEMO_MODE=1` (storefront shows a
 "prices are test data" banner + a "تجريبي" tag on every price). Set it to `0` for production.

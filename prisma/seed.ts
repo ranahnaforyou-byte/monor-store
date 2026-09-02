@@ -2,6 +2,7 @@
  * Seed: admin owner, store settings, catalog categories, and the 58 wilayas +
  * starter communes + shipping rates. Safe to re-run (idempotent upserts).
  */
+import { randomBytes } from "node:crypto";
 import { PrismaClient } from "../src/generated/prisma";
 import { hash } from "@node-rs/argon2";
 import { WILAYAS } from "../src/lib/algeria/wilayas";
@@ -12,16 +13,27 @@ const db = new PrismaClient();
 const ARGON = { memoryCost: 19456, timeCost: 2, parallelism: 1 };
 
 async function main() {
-  // --- Admin owner ---------------------------------------------------------
+  // --- Admin owner -------------------------------------------------------
+  // No hard-coded default (this repo may be public). Use SEED_ADMIN_PASSWORD,
+  // otherwise a random one is generated and printed ONCE below.
   const email = (process.env.SEED_ADMIN_EMAIL ?? "admin@monor.store").toLowerCase();
-  const password = process.env.SEED_ADMIN_PASSWORD ?? "MonorAdmin!2026";
+  const generated = !process.env.SEED_ADMIN_PASSWORD;
+  const password =
+    process.env.SEED_ADMIN_PASSWORD ?? `Monor-${randomBytes(9).toString("base64url")}`;
   const passwordHash = await hash(password, ARGON);
+  const existing = await db.adminUser.findUnique({ where: { email }, select: { id: true } });
   await db.adminUser.upsert({
     where: { email },
-    update: {},
+    update: {}, // never overwrite an existing account's password
     create: { email, name: "Owner", passwordHash, role: "OWNER" },
   });
-  console.log(`✓ admin: ${email}  (password: ${password})  — change it after first login`);
+  if (existing) {
+    console.log(`✓ admin ${email} already exists — password unchanged`);
+  } else {
+    console.log(
+      `✓ admin created: ${email}\n  password: ${password}${generated ? "  (generated — save it now, change it after first login)" : ""}`,
+    );
+  }
 
   // --- Store settings -----------------------------------------------------
   await db.storeSetting.upsert({
