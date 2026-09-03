@@ -17,7 +17,9 @@ const ARGON = { memoryCost: 19456, timeCost: 2, parallelism: 1 };
 const CATEGORY_SLUGS = ["firm-ground", "artificial-grass", "turf", "indoor"] as const;
 
 export async function provisionCoreData() {
-  // --- Admin owner --------------------------------------------------------
+  // --- Admin accounts ---------------------------------------------------
+  // Each admin is a separate row with its own password. The developer login
+  // comes from SEED_ADMIN_*, the store owner's from SEED_OWNER_* (optional).
   const email = (process.env.SEED_ADMIN_EMAIL ?? "admin@monor.store").toLowerCase();
   const generated = !process.env.SEED_ADMIN_PASSWORD;
   const password =
@@ -25,9 +27,38 @@ export async function provisionCoreData() {
   const existingAdmin = await db.adminUser.findUnique({ where: { email }, select: { id: true } });
   if (!existingAdmin) {
     await db.adminUser.create({
-      data: { email, name: "Owner", passwordHash: await hash(password, ARGON), role: "OWNER" },
+      data: { email, name: "Developer", passwordHash: await hash(password, ARGON), role: "OWNER" },
     });
   }
+
+  // Separate store-owner login — never shares the developer's credentials.
+  const owner: { email: string; created: boolean } | null = await (async () => {
+    const oEmail = process.env.SEED_OWNER_EMAIL?.trim().toLowerCase();
+    const oPass = process.env.SEED_OWNER_PASSWORD;
+    if (!oEmail || !oPass || oPass.length < 8) return null;
+    const oRole = (process.env.SEED_OWNER_ROLE ?? "OWNER").toUpperCase();
+    const role = (["OWNER", "MANAGER", "STAFF"] as const).includes(oRole as never)
+      ? (oRole as "OWNER" | "MANAGER" | "STAFF")
+      : "OWNER";
+    const existing = await db.adminUser.findUnique({ where: { email: oEmail }, select: { id: true } });
+    await db.adminUser.upsert({
+      where: { email: oEmail },
+      update: {
+        passwordHash: await hash(oPass, ARGON),
+        role,
+        disabled: false,
+        failedLogins: 0,
+        lockedUntil: null,
+      },
+      create: {
+        email: oEmail,
+        name: process.env.SEED_OWNER_NAME ?? "MONOR",
+        passwordHash: await hash(oPass, ARGON),
+        role,
+      },
+    });
+    return { email: oEmail, created: !existing };
+  })();
 
   // --- Store settings ---------------------------------------------------
   await db.storeSetting.upsert({
@@ -90,6 +121,8 @@ export async function provisionCoreData() {
     admin: email,
     adminCreated: !existingAdmin,
     adminPassword: !existingAdmin && generated ? password : undefined,
+    owner: owner ? owner.email : "(SEED_OWNER_EMAIL not set)",
+    ownerCreated: owner?.created ?? false,
     wilayas: WILAYAS.length,
     categories: categories.length,
   };
