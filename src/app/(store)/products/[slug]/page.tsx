@@ -5,7 +5,6 @@ import { getI18n } from "@/lib/i18n/server";
 import {
   getProductBySlug,
   relatedProducts,
-  allActiveSlugs,
 } from "@/server/services/catalog";
 import { getStoreSettings } from "@/server/services/settings";
 import { Gallery } from "@/components/store/gallery";

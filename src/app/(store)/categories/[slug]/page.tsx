@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getI18n } from "@/lib/i18n/server";
-import { getCategoryBySlug, listProducts, listCategories } from "@/server/services/catalog";
+import { getCategoryBySlug, listProducts } from "@/server/services/catalog";
 import { ProductGrid } from "@/components/store/product-grid";
 import { Pagination } from "@/components/store/pagination";
 import { breadcrumbJsonLd, JsonLd, absoluteUrl } from "@/lib/seo";
