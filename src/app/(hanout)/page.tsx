@@ -34,7 +34,7 @@ export default async function HanoutHome() {
       {/* Hero */}
       <section className="zellige relative overflow-hidden">
         <div className="mx-auto max-w-[1240px] px-4 pb-10 pt-12 text-center sm:px-6 md:pt-16 lg:px-8">
-          <h1 className="font-display text-[56px] font-black leading-[1.05] tracking-tight text-[#0d2b22] sm:text-[84px] lg:text-[104px]">
+          <h1 className="font-display text-[56px] font-black leading-[1.05] tracking-tight text-[#0d2b22] sm:text-[84px] lg:text-[96px]">
             كلّ{" "}
             <span className="relative inline-block">
               واحد
@@ -86,20 +86,20 @@ export default async function HanoutHome() {
                       <HanoutMark className="h-4 w-4" />
                       <span className="font-display text-sm font-black">حانوت</span>
                     </span>
-                    <span className="text-[10px] font-bold text-coral">قسم التأكيد</span>
+                    <span className="text-[10px] font-bold text-coral-strong">قسم التأكيد</span>
                   </div>
                   <p className="px-3 pb-1 pt-3 font-display text-base font-black">طلب جديد</p>
                   <ul className="space-y-2 px-2.5">
                     {latest.length === 0 && <li className="rounded-xl bg-paper p-3 text-center text-[11px] text-muted">في انتظار أول طلب…</li>}
                     {latest.map((o, i) => (
-                      <li key={o.id} className={`anim-pop rounded-xl border bg-paper p-2.5 ${i === 0 ? "border-coral/60" : "border-line"}`}>
+                      <li key={o.id} className={`rounded-xl border bg-paper p-2.5 ${i === 0 ? "anim-pop border-coral/60" : "border-line"}`}>
                         <div className="flex items-center justify-between">
                           <span className="num text-xs font-bold">{shortRef(o.reference)}</span>
                           <span className="text-[10px] text-muted">{timeAgo(o.createdAt, now)}</span>
                         </div>
                         <p className="truncate text-[12px] font-semibold">{o.customerName}</p>
                         <p className="truncate text-[10px] text-muted">{o.items[0]?.nameSnapshot}</p>
-                        <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-coral">
+                        <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-coral-strong">
                           <span className="h-1.5 w-1.5 rounded-full bg-coral" /> قيد التأكيد
                         </span>
                       </li>
@@ -234,8 +234,10 @@ export default async function HanoutHome() {
       {/* Crafts + business */}
       <section className="mx-auto grid max-w-[1240px] gap-4 px-4 py-16 sm:px-6 md:grid-cols-2 lg:px-8">
         <div id="crafts" className="scroll-mt-20 rounded-[var(--radius-xl)] bg-mint-soft p-7">
-          <span className="inline-flex rounded-full bg-paper px-3 py-1 text-xs font-bold text-[#13855c]">قريبًا</span>
-          <h2 className="mt-3 font-display text-3xl font-black">للحرفيين</h2>
+          <h2 className="flex items-center gap-3 font-display text-3xl font-black">
+            للحرفيين
+            <span className="rounded-full bg-paper px-3 py-1 font-sans text-xs font-bold text-[#0f7a52]">قريبًا</span>
+          </h2>
           <p className="mt-2 text-ink-soft">الزبون يطلب أقرب حرفي، والورشة توزّع العمل على مساعديها — بنفس النظام.</p>
           <div className="mt-4 flex flex-wrap gap-2">
             {["سباكة", "كهرباء", "تكييف", "دهان", "نجارة", "تنظيف"].map((x) => (
@@ -255,8 +257,10 @@ export default async function HanoutHome() {
           </div>
         </div>
         <div id="business" className="scroll-mt-20 rounded-[var(--radius-xl)] bg-saffron-soft p-7">
-          <span className="inline-flex rounded-full bg-paper px-3 py-1 text-xs font-bold text-[#9a6d00]">قريبًا</span>
-          <h2 className="mt-3 font-display text-3xl font-black">للشركات</h2>
+          <h2 className="flex items-center gap-3 font-display text-3xl font-black">
+            للشركات
+            <span className="rounded-full bg-paper px-3 py-1 font-sans text-xs font-bold text-[#9a6d00]">قريبًا</span>
+          </h2>
           <p className="mt-2 text-ink-soft">اختر قالبًا جاهزًا وحدّد الأقسام والأدوار: كل موظف يرى مهامه وجروب قسمه.</p>
           <div className="mt-4 flex flex-wrap gap-2">
             {["مقهى", "مركز تكوين", "وكالة", "ورشة"].map((x) => (
@@ -265,10 +269,10 @@ export default async function HanoutHome() {
           </div>
           <div className="mt-5 grid grid-cols-4 gap-2 text-center text-xs font-bold">
             {[
-              ["جديد", "bg-coral-soft text-coral"],
+              ["جديد", "bg-coral-soft text-coral-strong"],
               ["مؤكد", "bg-paper text-ink"],
               ["قيد الإنجاز", "bg-saffron text-ink"],
-              ["مكتمل", "bg-mint text-white"],
+              ["مكتمل", "bg-mint-strong text-white"],
             ].map(([l, c]) => (
               <span key={l} className={`rounded-xl px-1 py-3 ${c}`}>{l}</span>
             ))}
@@ -335,7 +339,7 @@ function ProductCard({
         </span>
       </div>
       {pill && (
-        <span className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-coral px-3 py-1.5 text-xs font-bold text-white">
+        <span className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-coral-strong px-3 py-1.5 text-xs font-bold text-white">
           <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor" aria-hidden><path d="M13 2 3 14h7l-1 8 10-12h-7z" /></svg>
           {pill}
         </span>

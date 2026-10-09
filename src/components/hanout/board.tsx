@@ -58,7 +58,7 @@ export async function SystemBoard({ compact = false }: { compact?: boolean }) {
           <span className="hidden flex-1 rounded-full border border-line bg-surface px-3 py-1.5 text-[11px] text-muted sm:block">
             ابحث عن طلب، عميل أو منتج…
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-mint-soft px-2.5 py-1 text-[11px] font-bold text-[#13855c]">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-mint-soft px-2.5 py-1 text-[11px] font-bold text-[#0f7a52]">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-mint" /> مباشر
           </span>
         </div>
@@ -87,7 +87,7 @@ export async function SystemBoard({ compact = false }: { compact?: boolean }) {
                     return (
                       <li
                         key={o.id}
-                        className={cn("anim-pop rounded-xl border border-line bg-paper p-2", fresh && "border-coral/60 anim-ring")}
+                        className={cn("rounded-xl border border-line bg-paper p-2", fresh && "anim-pop anim-ring border-coral/60")}
                       >
                         <span className="flex items-center gap-2">
                           <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-surface-2">

@@ -28,8 +28,10 @@
   --saffron-soft: #fff3cc;
   --coral: #ff5a4e; /* new / needs action + التأكيد */
   --coral-soft: #ffe7e4;
+  --coral-strong: #d63a2f; /* white text on coral passes AA */
   --mint: #2bc48a; /* success + الشحن */
   --mint-soft: #dcf5e9;
+  --mint-strong: #0f7a52;
 
   /* accents (MONOR names kept for the existing UI) */
   --accent: #13241f;
@@ -78,8 +80,10 @@
   --color-saffron-soft: var(--saffron-soft);
   --color-coral: var(--coral);
   --color-coral-soft: var(--coral-soft);
+  --color-coral-strong: var(--coral-strong);
   --color-mint: var(--mint);
   --color-mint-soft: var(--mint-soft);
+  --color-mint-strong: var(--mint-strong);
 
   --color-success: var(--success);
   --color-warning: var(--warning);

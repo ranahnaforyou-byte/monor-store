@@ -38,6 +38,8 @@ export function playChime() {
 
 export function buzz() {
   try {
+    // Browsers block vibration until the user has tapped the page at least once.
+    if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
     navigator.vibrate?.([120, 60, 120]);
   } catch {
     /* ignore */

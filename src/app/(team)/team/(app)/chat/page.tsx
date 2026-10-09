@@ -61,7 +61,7 @@ export default async function TeamChatPage({ searchParams }: { searchParams: Pro
         {messages.map((m) => {
           if (m.kind === "SYSTEM") {
             return (
-              <li key={m.id} className="anim-pop">
+              <li key={m.id}>
                 <div className={cn("flex items-start gap-2.5 rounded-2xl border px-3.5 py-2.5", TONE[m.tone ?? "done"])}>
                   <span className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/70">
                     <SysIcon tone={m.tone} />
@@ -74,7 +74,7 @@ export default async function TeamChatPage({ searchParams }: { searchParams: Pro
           }
           const mine = m.authorId === user.id;
           return (
-            <li key={m.id} className={cn("anim-pop flex items-end gap-2", mine && "flex-row-reverse")}>
+            <li key={m.id} className={cn("flex items-end gap-2", mine && "flex-row-reverse")}>
               {!mine && m.author && <Avatar user={m.author} size="sm" />}
               <div
                 className={cn(

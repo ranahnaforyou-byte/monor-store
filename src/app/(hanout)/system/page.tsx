@@ -67,7 +67,7 @@ export default async function SystemPage() {
           </div>
           <ul className="flex-1 space-y-3 p-4">
             {messages.map((m) => (
-              <li key={m.id} className="anim-pop flex items-start gap-3">
+              <li key={m.id} className="flex items-start gap-3">
                 {m.author ? (
                   <Avatar user={m.author} size="sm" />
                 ) : (
@@ -100,7 +100,7 @@ export default async function SystemPage() {
               <h2 className="font-display text-xl font-black">مسار الطلب</h2>
               <p className="text-sm text-muted">متابعة مراحل الطلب بشكل لحظي</p>
             </div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-mint-soft px-3 py-1 text-xs font-bold text-[#13855c]">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-mint-soft px-3 py-1 text-xs font-bold text-[#0f7a52]">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-mint" /> مباشر
             </span>
           </div>

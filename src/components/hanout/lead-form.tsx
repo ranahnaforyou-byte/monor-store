@@ -65,7 +65,7 @@ export function LeadForm() {
           </select>
         </label>
       </div>
-      {state.error && <p className="mt-3 text-sm font-semibold text-coral">{state.error}</p>}
+      {state.error && <p className="mt-3 text-sm font-semibold text-coral-strong">{state.error}</p>}
       <button disabled={pending} className="mt-5 h-12 w-full rounded-2xl bg-saffron text-base font-black text-ink disabled:opacity-60">
         {pending ? "جارٍ الإرسال…" : "اتصلوا بي"}
       </button>

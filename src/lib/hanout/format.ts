@@ -22,9 +22,9 @@ export function initials(name: string): string {
 
 /** Department → Hanout accent */
 export const DEPT_TONE: Record<string, { bg: string; fg: string; ring: string; label: string }> = {
-  confirm: { bg: "bg-coral-soft", fg: "text-coral", ring: "ring-coral/30", label: "التأكيد" },
+  confirm: { bg: "bg-coral-soft", fg: "text-coral-strong", ring: "ring-coral/30", label: "التأكيد" },
   prepare: { bg: "bg-saffron-soft", fg: "text-[#9a6d00]", ring: "ring-saffron/40", label: "التحضير" },
-  ship: { bg: "bg-mint-soft", fg: "text-[#13855c]", ring: "ring-mint/40", label: "الشحن" },
+  ship: { bg: "bg-mint-soft", fg: "text-[#0f7a52]", ring: "ring-mint/40", label: "الشحن" },
   owner: { bg: "bg-brand-soft", fg: "text-brand", ring: "ring-brand/30", label: "المالك" },
   manager: { bg: "bg-surface-2", fg: "text-ink", ring: "ring-ink/20", label: "الإدارة" },
 };

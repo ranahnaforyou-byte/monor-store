@@ -50,8 +50,8 @@ export default async function OwnerDashboard() {
             <div className="h-full rounded-full bg-saffron transition-[width] duration-700" style={{ width: `${k.confirmRate}%` }} />
           </div>
         </div>
-        <Kpi label="بانتظار التأكيد" value={k.pending} tone="text-coral" href="/team/orders?d=confirm" />
-        <Kpi label="قيد الشحن" value={k.inShipping} tone="text-[#13855c]" href="/team/orders?d=ship" />
+        <Kpi label="بانتظار التأكيد" value={k.pending} tone="text-coral-strong" href="/team/orders?d=confirm" />
+        <Kpi label="قيد الشحن" value={k.inShipping} tone="text-[#0f7a52]" href="/team/orders?d=ship" />
         <Kpi label="رقم الأعمال المؤكد" value={formatDZD(k.revenue)} tone="text-brand" small />
         <Kpi label="مهتمون من المعرض" value={k.leads} tone="text-[#9a6d00]" />
       </div>

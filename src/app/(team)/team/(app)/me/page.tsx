@@ -52,7 +52,7 @@ export default async function TeamMePage() {
       </section>
 
       <form action={teamLogout}>
-        <button className="h-11 w-full rounded-[var(--radius)] border border-line-strong bg-paper text-sm font-bold text-coral">
+        <button className="h-11 w-full rounded-[var(--radius)] border border-line-strong bg-paper text-sm font-bold text-coral-strong">
           تسجيل الخروج
         </button>
       </form>

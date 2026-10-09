@@ -61,13 +61,13 @@ export function OrderCard({ order, couriers }: { order: CardOrder; couriers: rea
   return (
     <article
       className={cn(
-        "hn-card anim-pop overflow-hidden transition-opacity",
-        order.isNew && pendingDesk && "border-coral/60 anim-ring",
+        "hn-card overflow-hidden transition-opacity",
+        order.isNew && pendingDesk && "anim-pop anim-ring border-coral/60",
         (pending || done) && "opacity-60",
       )}
     >
       {order.isNew && pendingDesk && (
-        <div className="flex items-center gap-2 bg-coral px-4 py-1.5 text-xs font-bold text-white">
+        <div className="flex items-center gap-2 bg-coral-strong px-4 py-1.5 text-xs font-bold text-white">
           <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
           طلب جديد · {order.ago}
         </div>
@@ -92,7 +92,7 @@ export function OrderCard({ order, couriers }: { order: CardOrder; couriers: rea
 
         <div className="mt-2 flex flex-wrap gap-1.5">
           {order.selfConfirmed && (
-            <span className="rounded-full bg-mint-soft px-2 py-0.5 text-[11px] font-semibold text-[#13855c]">
+            <span className="rounded-full bg-mint-soft px-2 py-0.5 text-[11px] font-semibold text-[#0f7a52]">
               أكّده الزبون بنفسه عبر الرابط
             </span>
           )}
@@ -103,7 +103,7 @@ export function OrderCard({ order, couriers }: { order: CardOrder; couriers: rea
             </span>
           )}
           {order.courier && order.status === "SHIPPED" && (
-            <span className="rounded-full bg-mint-soft px-2 py-0.5 text-[11px] font-semibold text-[#13855c]">
+            <span className="rounded-full bg-mint-soft px-2 py-0.5 text-[11px] font-semibold text-[#0f7a52]">
               مع {order.courier}
             </span>
           )}
@@ -111,7 +111,7 @@ export function OrderCard({ order, couriers }: { order: CardOrder; couriers: rea
 
         {/* Actions per department */}
         {done ? (
-          <p className="mt-4 rounded-[var(--radius)] bg-mint-soft px-3 py-2.5 text-center text-sm font-semibold text-[#13855c]">
+          <p className="mt-4 rounded-[var(--radius)] bg-mint-soft px-3 py-2.5 text-center text-sm font-semibold text-[#0f7a52]">
             {done}
           </p>
         ) : pendingDesk ? (
@@ -153,7 +153,7 @@ export function OrderCard({ order, couriers }: { order: CardOrder; couriers: rea
                   className={cn(
                     "h-10 rounded-[var(--radius-sm)] border text-xs font-semibold",
                     label === "إلغاء" || label === "رقم خاطئ"
-                      ? "border-coral/40 text-coral"
+                      ? "border-coral/40 text-coral-strong"
                       : "border-line-strong text-ink-soft",
                   )}
                 >
@@ -193,7 +193,7 @@ export function OrderCard({ order, couriers }: { order: CardOrder; couriers: rea
               type="button"
               disabled={pending}
               onClick={() => run(() => teamShip(order.id, courier), `سُلّم إلى ${courier}`)}
-              className="h-12 w-full rounded-[var(--radius)] bg-mint text-sm font-bold text-white active:scale-[0.99]"
+              className="h-12 w-full rounded-[var(--radius)] bg-mint-strong text-sm font-bold text-white active:scale-[0.99]"
             >
               تسليم الطرد لشركة التوصيل
             </button>
@@ -203,13 +203,13 @@ export function OrderCard({ order, couriers }: { order: CardOrder; couriers: rea
             type="button"
             disabled={pending}
             onClick={() => run(() => teamDelivered(order.id), "وصل للزبون وتم الدفع")}
-            className="mt-4 h-11 w-full rounded-[var(--radius)] border border-mint text-sm font-bold text-[#13855c]"
+            className="mt-4 h-11 w-full rounded-[var(--radius)] border border-mint text-sm font-bold text-[#0f7a52]"
           >
             تأكيد الوصول والدفع
           </button>
         ) : null}
 
-        {error && <p className="mt-2 text-xs font-medium text-coral">{error}</p>}
+        {error && <p className="mt-2 text-xs font-medium text-coral-strong">{error}</p>}
       </div>
     </article>
   );

@@ -64,7 +64,7 @@ export function TabBar({ lead, badge }: { lead: boolean; badge: number }) {
                 </span>
                 {t.label}
                 {t.key === "orders" && badge > 0 && (
-                  <span className="num absolute top-1 start-1/2 ms-3 flex h-5 min-w-5 items-center justify-center rounded-full bg-coral px-1 text-[10px] font-bold text-white">
+                  <span className="num absolute top-1 start-1/2 ms-3 flex h-5 min-w-5 items-center justify-center rounded-full bg-coral-strong px-1 text-[10px] font-bold text-white">
                     {badge}
                   </span>
                 )}

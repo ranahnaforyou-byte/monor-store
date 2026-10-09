@@ -58,7 +58,7 @@ export function NewOrderAlert({ items, storageKey = "hn-seen" }: { items: Item[]
         <div className="pointer-events-none fixed inset-x-0 top-3 z-50 flex justify-center px-3">
           <div
             role="status"
-            className="anim-slide-down flex w-full max-w-[440px] items-center gap-3 rounded-2xl bg-coral px-4 py-3 text-white shadow-[var(--shadow-lg)]"
+            className="anim-slide-down flex w-full max-w-[440px] items-center gap-3 rounded-2xl bg-coral-strong px-4 py-3 text-white shadow-[var(--shadow-lg)]"
           >
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20">
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>

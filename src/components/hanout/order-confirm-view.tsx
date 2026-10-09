@@ -322,21 +322,21 @@ export function OrderConfirmView(p: ConfirmViewProps) {
                   if (!r.ok) setErr(t.errLocked);
                 });
               }}
-              className="h-12 rounded-2xl border border-coral/50 bg-paper text-sm font-bold text-coral"
+              className="h-12 rounded-2xl border border-coral/50 bg-paper text-sm font-bold text-coral-strong"
             >
               {t.cancel}
             </button>
           </div>
         </div>
       )}
-      {err && <p className="mt-2 text-center text-sm text-coral">{err}</p>}
+      {err && <p className="mt-2 text-center text-sm text-coral-strong">{err}</p>}
 
       {/* Live timeline */}
       {!cancelled && (
         <div className="hn-card mt-5 p-4">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-display text-lg font-black">{t.track}</h2>
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#13855c]">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#0f7a52]">
               <span className="h-2 w-2 animate-pulse rounded-full bg-mint" />
               {t.live}
             </span>
