@@ -1,7 +1,7 @@
 {
   "site": {
-    "name": "MONOR STORE",
-    "tagline": "Chaussures de football professionnelles"
+    "name": "Boutique Noor",
+    "tagline": "Maison, beauté, électronique et mode"
   },
   "nav": {
     "home": "Accueil",
@@ -44,8 +44,8 @@
     "save": "Économisez"
   },
   "home": {
-    "heroTitle": "Jouez à votre façon",
-    "heroSubtitle": "Une sélection de chaussures de football authentiques — livraison dans les 58 wilayas, paiement à la livraison.",
+    "heroTitle": "Tout ce qu'il vous faut, livré chez vous",
+    "heroSubtitle": "Maison, soin et électronique — livraison dans les 58 wilayas, paiement à la livraison et confirmation de chaque commande.",
     "heroCta": "Voir la collection",
     "featured": "Produits en vedette",
     "shopByCategory": "Acheter par catégorie",
@@ -127,7 +127,7 @@
   },
   "footer": {
     "about": "À propos",
-    "aboutText": "MONOR STORE — boutique algérienne spécialisée dans les chaussures de football authentiques.",
+    "aboutText": "Boutique Noor — boutique de démonstration propulsée par Hanout.",
     "help": "Aide",
     "contact": "Contact",
     "shipping": "Livraison",

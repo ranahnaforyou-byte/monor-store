@@ -11,6 +11,7 @@ import { ProductGrid } from "@/components/store/product-grid";
 import { Button } from "@/components/ui/button";
 import { primaryImage, PLACEHOLDER_IMAGE } from "@/lib/images";
 
+export const metadata = { title: { absolute: "متجر نور — يعمل بنظام حانوت" } };
 export const revalidate = 300;
 
 export default async function HomePage() {
