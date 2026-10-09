@@ -6,12 +6,9 @@ import { ProductGrid } from "@/components/store/product-grid";
 import { Pagination } from "@/components/store/pagination";
 import { breadcrumbJsonLd, JsonLd, absoluteUrl } from "@/lib/seo";
 
-export const revalidate = 3600;
-
-export async function generateStaticParams() {
-  const cats = await listCategories();
-  return cats.map((c) => ({ slug: c.slug }));
-}
+// Rendered per request: the store header reads the cart cookie, and new demo
+// products appear after the build. Catalog reads stay cached (unstable_cache).
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
