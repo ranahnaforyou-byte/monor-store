@@ -650,3 +650,7 @@ export async function getOrderTimeline(reference: string) {
     include: { items: true, events: { orderBy: { createdAt: "asc" } } },
   });
 }
+
+export async function getLeads(take = 50) {
+  return db.lead.findMany({ orderBy: { createdAt: "desc" }, take });
+}

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireTeamUser, isLead } from "@/lib/hanout/team-session";
-import { getLeaderboard, getOwnerKpis, getTeamMembers } from "@/server/services/hanout";
+import { getLeaderboard, getLeads, getOwnerKpis, getTeamMembers } from "@/server/services/hanout";
+import { clock } from "@/lib/hanout/format";
 import { formatDZD } from "@/lib/money";
 import { Avatar } from "@/components/hanout/avatar";
 import { DemoTag } from "@/components/hanout/logo";
@@ -22,7 +23,7 @@ const PIPE = [
 export default async function OwnerDashboard() {
   const user = await requireTeamUser();
   if (!isLead(user)) redirect("/team/orders");
-  const [k, board, members] = await Promise.all([getOwnerKpis(), getLeaderboard(), getTeamMembers()]);
+  const [k, board, members, leads] = await Promise.all([getOwnerKpis(), getLeaderboard(), getTeamMembers(), getLeads()]);
   const max = Math.max(1, ...PIPE.map((p) => k.byStatus[p.key] ?? 0));
   const hour = Number(new Date().toLocaleString("en-GB", { hour: "2-digit", hour12: false, timeZone: "Africa/Algiers" }));
 
@@ -93,6 +94,34 @@ export default async function OwnerDashboard() {
             );
           })}
         </ol>
+      </section>
+
+      <section id="leads" className="hn-card p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-ink-soft">المهتمون من المعرض</h2>
+          <span className="num text-sm font-black text-brand">{leads.length}</span>
+        </div>
+        {leads.length === 0 ? (
+          <p className="text-sm text-muted">لا أحد بعد. نموذج «سجّل اهتمامك» في الصفحة الرئيسية.</p>
+        ) : (
+          <ul className="divide-y divide-line">
+            {leads.map((l) => (
+              <li key={l.id} className="flex items-center gap-3 py-2.5">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold">{l.name}</p>
+                  <p className="truncate text-xs text-muted">
+                    {l.activity}
+                    {l.monthlyOrders ? ` · ${l.monthlyOrders}` : ""} · <span className="num">{clock(l.createdAt)}</span>
+                  </p>
+                </div>
+                <a href={`tel:${l.phone}`} className="num rounded-full bg-brand-soft px-3 py-1.5 text-xs font-bold text-brand">
+                  {l.phone}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+        <p className="mt-3 text-[11px] text-muted">إعادة ضبط العرض لا تحذف هذه القائمة.</p>
       </section>
 
       <ResetDemoButton />
