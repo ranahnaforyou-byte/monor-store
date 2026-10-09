@@ -9,7 +9,7 @@ import {
   type DeptSlug,
 } from "@/server/services/hanout";
 import { formatDZD } from "@/lib/money";
-import { timeAgo, DEPT_TONE } from "@/lib/hanout/format";
+import { timeAgo, DEPT_TONE, serverNow } from "@/lib/hanout/format";
 import { OrderCard } from "@/components/hanout/order-card";
 import { cn } from "@/lib/utils";
 
@@ -29,7 +29,7 @@ export default async function TeamOrdersPage({ searchParams }: { searchParams: P
   const dept: DeptSlug = lead && DEPARTMENTS.some((x) => x.slug === d) ? (d as DeptSlug) : lead ? "confirm" : own;
 
   const [orders, counts] = await Promise.all([getDeptOrders(dept), getDeptCounts()]);
-  const now = Date.now();
+  const now = serverNow();
   const tone = DEPT_TONE[dept];
 
   return (

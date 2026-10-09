@@ -33,3 +33,8 @@ export function toneFor(user: { role: string; department?: { slug: string } | nu
   if (user.department?.slug) return DEPT_TONE[user.department.slug];
   return user.role === "OWNER" ? DEPT_TONE.owner : DEPT_TONE.manager;
 }
+
+/** Request-time clock for Server Components (each render is a fresh request). */
+export function serverNow(): number {
+  return Date.now();
+}
