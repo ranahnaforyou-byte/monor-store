@@ -1,5 +1,12 @@
 # حانوت — دليل العرض (ECSEL Expo)
 
+**الموقع المنشور:** https://hanout-demo.vercel.app  
+- الرئيسية: https://hanout-demo.vercel.app  
+- المتجر (للزبون): https://hanout-demo.vercel.app/shop  
+- الفريق (هاتفك): https://hanout-demo.vercel.app/team  
+- لوحة المالك + المهتمون: https://hanout-demo.vercel.app/owner  
+- النظام: https://hanout-demo.vercel.app/system
+
 فرع `expo-demo` في مشروع MONOR. الفكرة: **«النظام — كلّ واحد ودوره»**: طلب الزبون يمر بأقسام الفريق
 (تأكيد ← تحضير ← شحن)، ولكل قسم جروب يكتب فيه النظام تلقائيًا، والتأكيد هو الميزة الأولى.
 
