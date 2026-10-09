@@ -74,6 +74,13 @@ export async function createOrder(
 
   const wilaya = await db.wilaya.findUnique({ where: { code: input.wilayaCode } });
   if (!wilaya) return { ok: false, error: "invalidInput", field: "wilayaCode" };
+  // Hanout: keep Arabic place names on the order so the team app reads naturally.
+  const communeRow = await db.commune.findFirst({
+    where: { wilayaCode: input.wilayaCode, name: input.communeName },
+    select: { nameAr: true },
+  });
+  const wilayaLabel = wilaya.nameAr || wilaya.name;
+  const communeLabel = communeRow?.nameAr || input.communeName;
 
   const subtotal = purchasable.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
   const baseShipping = await getShippingFee(input.wilayaCode, input.deliveryMode);
@@ -127,7 +134,7 @@ export async function createOrder(
           name: input.customerName,
           email: input.customerEmail,
           wilayaCode: input.wilayaCode,
-          wilayaName: wilaya.name,
+          wilayaName: wilayaLabel,
           communeName: input.communeName,
           addressLine: input.addressLine,
           ordersCount: 1,
@@ -137,7 +144,7 @@ export async function createOrder(
           name: input.customerName,
           email: input.customerEmail ?? undefined,
           wilayaCode: input.wilayaCode,
-          wilayaName: wilaya.name,
+          wilayaName: wilayaLabel,
           communeName: input.communeName,
           addressLine: input.addressLine,
           ordersCount: { increment: 1 },
@@ -175,8 +182,8 @@ export async function createOrder(
           customerPhone: input.customerPhone,
           customerEmail: input.customerEmail,
           wilayaCode: input.wilayaCode,
-          wilayaName: wilaya.name,
-          communeName: input.communeName,
+          wilayaName: wilayaLabel,
+          communeName: communeLabel,
           addressLine: input.addressLine,
           deliveryMode: input.deliveryMode,
           notes: input.notes,

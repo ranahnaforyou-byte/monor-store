@@ -81,7 +81,7 @@ export function NewOrderAlert({ items, storageKey = "hn-seen" }: { items: Item[]
             setSoundOn(true);
             playChime();
           }}
-          className="fixed inset-x-0 top-[76px] z-40 mx-auto w-fit rounded-full bg-ink/90 px-4 py-2 text-xs font-semibold text-white shadow-[var(--shadow-md)]"
+          className="fixed inset-x-0 bottom-[140px] z-40 mx-auto w-fit rounded-full bg-ink/90 px-4 py-2 text-xs font-semibold text-white shadow-[var(--shadow-md)]"
         >
           اضغط لتفعيل صوت التنبيه
         </button>

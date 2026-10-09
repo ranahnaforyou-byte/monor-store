@@ -55,7 +55,7 @@ export default async function TeamAppLayout({ children }: { children: React.Reac
         </header>
 
         <main className="flex-1 px-4 pb-28 pt-4">{children}</main>
-        <TabBar lead={lead} badge={counts.confirm} />
+        <TabBar lead={lead} badge={lead ? counts.confirm : counts[dept]} />
       </div>
       <LiveRefresh />
       <NewOrderAlert
