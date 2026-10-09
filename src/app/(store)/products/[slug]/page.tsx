@@ -86,7 +86,7 @@ export default async function ProductPage({
       />
 
       <nav className="mb-4 flex flex-wrap items-center gap-1.5 text-xs text-muted">
-        <Link href="/" className="hover:text-ink">{t("nav.home")}</Link>
+        <Link href="/shop" className="hover:text-ink">{t("nav.home")}</Link>
         <span>/</span>
         <Link href="/products" className="hover:text-ink">{t("nav.shop")}</Link>
         {product.category && (

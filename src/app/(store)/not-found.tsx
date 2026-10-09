@@ -7,7 +7,7 @@ export default function NotFound() {
       <p className="font-display text-5xl font-extrabold text-brand">404</p>
       <p className="text-ink-soft">الصفحة غير موجودة.</p>
       <Button asChild>
-        <Link href="/">العودة للرئيسية</Link>
+        <Link href="/shop">العودة للمتجر</Link>
       </Button>
     </div>
   );

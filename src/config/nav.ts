@@ -6,7 +6,7 @@ export type NavItem = {
 /** Primary storefront navigation. Category links are data-driven and appended
  *  at render time from the DB. */
 export const primaryNav: NavItem[] = [
-  { labelKey: "nav.home", href: "/" },
+  { labelKey: "nav.home", href: "/shop" },
   { labelKey: "nav.shop", href: "/products" },
   { labelKey: "nav.newArrivals", href: "/products?tag=new" },
   { labelKey: "nav.sale", href: "/products?tag=sale" },

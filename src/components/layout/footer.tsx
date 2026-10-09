@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HanoutLogo } from "@/components/hanout/logo";
 import { getI18n } from "@/lib/i18n/server";
 import { getStoreSettings } from "@/server/services/settings";
 import { listCategories } from "@/server/services/catalog";
@@ -12,8 +13,9 @@ export async function Footer() {
     <footer className="mt-16 border-t border-line bg-surface">
       <div className="mx-auto grid max-w-[1200px] gap-8 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
         <div className="md:col-span-2">
-          <p className="font-display text-lg font-extrabold">
-            MONOR<span className="text-brand"> STORE</span>
+          <p className="font-display text-lg font-extrabold">متجر نور</p>
+          <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-muted">
+            يعمل بنظام <HanoutLogo size="sm" className="[&_span]:text-sm" />
           </p>
           <p className="mt-3 max-w-sm text-sm text-muted">{t("footer.aboutText")}</p>
           {settings.contactPhone && (
@@ -47,7 +49,7 @@ export async function Footer() {
       </div>
       <div className="border-t border-line">
         <p className="mx-auto max-w-[1200px] px-4 py-4 text-center text-xs text-muted sm:px-6 lg:px-8">
-          © {year} MONOR STORE — {t("footer.rights")}
+          © {year} متجر نور · مدعوم بحانوت — {t("footer.rights")}
         </p>
       </div>
     </footer>

@@ -26,7 +26,7 @@ export type PublicSettings = {
 };
 
 const DEFAULTS: PublicSettings = {
-  storeName: "MONOR STORE",
+  storeName: "متجر نور",
   contactPhone: "",
   contactEmail: "",
   address: "",

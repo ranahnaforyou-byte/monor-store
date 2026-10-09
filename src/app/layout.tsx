@@ -7,7 +7,7 @@ import "./globals.css";
 
 const display = Cairo({
   subsets: ["arabic"],
-  weight: ["700", "800"],
+  weight: ["700", "800", "900"],
   variable: "--font-display",
   display: "swap",
   preload: false,
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a7c43",
+  themeColor: "#0b6b4f",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -64,7 +64,7 @@ export default async function RootLayout({
       className={`${display.variable} ${body.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-dvh bg-paper text-ink antialiased">{children}</body>
+      <body className="min-h-dvh bg-surface text-ink antialiased">{children}</body>
     </html>
   );
 }

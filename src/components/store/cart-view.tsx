@@ -63,7 +63,7 @@ export function CartView({ cart, labels }: { cart: ResolvedCart; labels: Labels 
                 {item.name}
               </Link>
               <p className="text-xs text-muted">
-                {labels.size}: <span className="num">{item.size}</span>
+                {item.size !== "مقاس واحد" && (<>{labels.size}: <span className="num">{item.size}</span></>)}
                 {item.color ? ` · ${item.color}` : ""}
               </p>
               {item.unavailable ? (

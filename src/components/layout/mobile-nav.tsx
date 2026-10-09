@@ -33,7 +33,7 @@ export function MobileNav({
           className="fixed inset-y-0 end-0 z-50 flex w-[84%] max-w-sm flex-col bg-paper p-5 shadow-[var(--shadow-lg)] focus:outline-none"
         >
           <div className="flex items-center justify-between">
-            <Dialog.Title className="font-display text-lg font-bold">MONOR STORE</Dialog.Title>
+            <Dialog.Title className="font-display text-lg font-bold">متجر نور</Dialog.Title>
             <Dialog.Close
               aria-label={labels.close}
               className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius)] hover:bg-surface"

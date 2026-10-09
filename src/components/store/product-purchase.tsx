@@ -32,7 +32,9 @@ export function ProductPurchase({
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [size, setSize] = useState<string | null>(null);
+  // Single-size products (perfume, earbuds…) skip the size picker entirely.
+  const singleSize = sizeStock.length === 1;
+  const [size, setSize] = useState<string | null>(singleSize ? sizeStock[0].size : null);
   const [color, setColor] = useState<string | null>(colors[0] ?? null);
   const [qty, setQty] = useState(1);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
@@ -68,7 +70,7 @@ export function ProductPurchase({
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
+      <div className={singleSize ? "hidden" : undefined}>
         <p className="mb-2 text-sm font-medium text-ink-soft">{labels.selectSize}</p>
         <div className="flex flex-wrap gap-2">
           {sizeStock.map((s) => {

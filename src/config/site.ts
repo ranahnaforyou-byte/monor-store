@@ -4,11 +4,11 @@
  * editable from the admin panel.
  */
 export const siteConfig = {
-  name: "MONOR STORE",
-  shortName: "MONOR",
-  tagline: "أحذية كرة القدم الاحترافية",
+  name: "حانوت",
+  shortName: "حانوت",
+  tagline: "كلّ واحد ودوره",
   description:
-    "MONOR STORE — متجر جزائري متخصص في بيع أحذية كرة القدم الأصلية. توصيل لكل الولايات والدفع عند الاستلام.",
+    "حانوت — نظام يرتّب طلباتك وفريقك: تأكيد الطلبات، أقسام وأدوار، ومحادثة لكل قسم. من أول طلب حتى التسليم.",
   url: process.env.APP_URL ?? "http://localhost:3000",
   locale: "ar_DZ",
   defaultCurrency: "DZD",

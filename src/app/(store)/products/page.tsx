@@ -18,7 +18,7 @@ type SP = Record<string, string | string[] | undefined>;
 
 export const metadata: Metadata = {
   title: "المتجر",
-  description: "تصفح كل تشكيلة أحذية كرة القدم في MONOR STORE.",
+  description: "تصفح كل منتجات متجر نور: منزل، تجميل، إلكترونيات وأزياء.",
 };
 
 function toArray(v: string | string[] | undefined): string[] {

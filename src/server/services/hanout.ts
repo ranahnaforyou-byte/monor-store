@@ -583,7 +583,7 @@ export async function getChannelMessages(slug: ChannelSlug, take = 40) {
   if (!channel) return [];
   const rows = await db.message.findMany({
     where: { channelId: channel.id },
-    include: { author: { select: { id: true, name: true, title: true } } },
+    include: { author: { select: { id: true, name: true, title: true, role: true, department: { select: { slug: true } } } } },
     orderBy: { createdAt: "desc" },
     take,
   });

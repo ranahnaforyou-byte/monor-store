@@ -204,7 +204,7 @@ export function CheckoutForm({
                 <div className="flex-1 text-xs">
                   <p className="line-clamp-1 font-medium">{i.name}</p>
                   <p className="text-muted">
-                    <span className="num">{i.size}</span> × <span className="num">{i.quantity}</span>
+                    {i.size !== "مقاس واحد" && (<><span className="num">{i.size}</span> · </>)}× <span className="num">{i.quantity}</span>
                   </p>
                 </div>
                 <span className="num text-xs font-semibold">{formatDZD(i.lineTotal)}</span>

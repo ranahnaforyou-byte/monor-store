@@ -1,0 +1,11 @@
+{
+  "name": "حانوت — تطبيق الفريق",
+  "short_name": "حانوت",
+  "start_url": "/team",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "ar",
+  "background_color": "#faf7f2",
+  "theme_color": "#0b6b4f",
+  "icons": [{ "src": "/favicon.ico", "sizes": "48x48", "type": "image/x-icon" }]
+}

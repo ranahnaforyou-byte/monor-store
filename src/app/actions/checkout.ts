@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createOrder } from "@/server/services/orders";
 import { writeCartCookie } from "@/lib/cart/store";
 import { revalidateMany, tags } from "@/lib/cache";
+import { notifyNewOrder } from "@/server/services/hanout";
 
 export type CheckoutState = {
   error?: string;
@@ -31,6 +32,9 @@ export async function placeOrder(
   if (!result.ok) {
     return { error: result.error, field: result.field };
   }
+
+  // Hanout «النظام»: drop the new order into the confirmation team chat.
+  await notifyNewOrder(result.reference).catch((e) => console.error("notifyNewOrder", e));
 
   await writeCartCookie([]);
   revalidateMany(tags.products);

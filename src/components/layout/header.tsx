@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HanoutMark } from "@/components/hanout/logo";
 import { MobileNav } from "./mobile-nav";
 import { getI18n } from "@/lib/i18n/server";
 import { listCategories } from "@/server/services/catalog";
@@ -26,9 +27,10 @@ export async function Header() {
           labels={{ menu: t("nav.menu"), close: t("nav.close"), categories: t("nav.categories") }}
         />
 
-        <Link href="/" className="flex items-center gap-2">
-          <span className="font-display text-xl font-extrabold tracking-tight text-ink">
-            MONOR<span className="text-brand"> STORE</span>
+        <Link href="/shop" className="flex items-center gap-2">
+          <span className="font-display text-xl font-extrabold tracking-tight text-ink">متجر نور</span>
+          <span className="hidden items-center gap-1 rounded-full bg-brand-soft px-2 py-0.5 text-[11px] font-semibold text-brand sm:inline-flex">
+            <HanoutMark className="h-3.5 w-3.5" /> حانوت
           </span>
         </Link>
 

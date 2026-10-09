@@ -3,7 +3,7 @@ import { getAdmin } from "@/lib/auth/guards";
 import { AdminShell } from "@/components/admin/shell";
 
 export const metadata: Metadata = {
-  title: "MONOR Admin",
+  title: "حانوت — لوحة الإدارة",
   robots: { index: false, follow: false },
 };
 

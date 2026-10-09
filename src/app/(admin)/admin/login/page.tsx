@@ -18,7 +18,7 @@ export default function AdminLoginPage() {
         className="w-full max-w-sm rounded-[var(--radius-lg)] border border-line bg-paper p-6 shadow-[var(--shadow-md)]"
       >
         <p className="font-display text-xl font-extrabold">
-          MONOR<span className="text-brand"> ADMIN</span>
+          حانوت<span className="text-brand"> · لوحة الإدارة</span>
         </p>
         <p className="mt-1 text-sm text-muted">تسجيل الدخول إلى لوحة التحكم</p>
 

@@ -26,7 +26,7 @@ export function AdminShell({
     <div className="grid min-h-dvh grid-cols-1 bg-surface md:grid-cols-[240px_1fr]">
       <aside className="hidden border-e border-line bg-paper md:flex md:flex-col">
         <div className="flex h-14 items-center px-5 font-display text-lg font-extrabold">
-          MONOR<span className="text-brand"> ADMIN</span>
+          حانوت<span className="text-brand"> · الإدارة</span>
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 p-3 text-sm">
           {NAV.map((item) => (

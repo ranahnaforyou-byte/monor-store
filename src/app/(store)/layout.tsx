@@ -14,7 +14,7 @@ export default async function StoreLayout({
   if (settings.maintenanceMode) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-3 px-6 text-center">
-        <p className="font-display text-2xl font-extrabold">MONOR STORE</p>
+        <p className="font-display text-2xl font-extrabold">متجر نور</p>
         <p className="text-muted">المتجر في صيانة مؤقتة. نعود قريباً.</p>
       </div>
     );
