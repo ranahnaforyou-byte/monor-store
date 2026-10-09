@@ -57,9 +57,9 @@ export default async function HanoutHome() {
 
         {/* Showcase: laptop board + phone + QR */}
         <div className="mx-auto max-w-[1240px] px-4 pb-14 sm:px-6 lg:px-8">
-          <div className="relative grid grid-cols-[minmax(0,1fr)] items-end gap-6 lg:grid-cols-[220px_minmax(0,1fr)_230px]">
+          <div className="relative grid grid-cols-[minmax(0,1fr)] items-end gap-6 xl:grid-cols-[220px_minmax(0,1fr)_230px]">
             {/* QR (first in RTL = right side) */}
-            <div className="hidden lg:block">
+            <div className="hidden xl:block">
               <div className="hn-card mx-auto w-[220px] p-5 text-center">
                 <p className="font-display text-lg font-black">جرّبه من هاتفك</p>
                 <QrSvg path="/shop" className="mx-auto mt-3 w-[150px] rounded-lg border-2 border-brand/20 p-2 [&_svg]:h-auto [&_svg]:w-full" />
@@ -78,7 +78,7 @@ export default async function HanoutHome() {
             </div>
 
             {/* Phone */}
-            <div className="hidden lg:block">
+            <div className="hidden xl:block">
               <div className="mx-auto w-[220px] rounded-[34px] bg-[#1b2421] p-2 shadow-[var(--shadow-lg)]">
                 <div className="h-[420px] overflow-hidden rounded-[28px] bg-surface">
                   <div className="flex items-center justify-between border-b border-line bg-paper px-3 py-2.5">

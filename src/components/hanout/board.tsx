@@ -40,7 +40,7 @@ export async function SystemBoard({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex h-full min-h-0 bg-paper text-ink">
       {!compact && (
-        <aside className="hidden w-[128px] shrink-0 flex-col gap-1 bg-brand p-3 text-white/85 lg:flex">
+        <aside className="hidden w-[128px] shrink-0 flex-col gap-1 bg-brand p-3 text-white/85 xl:flex">
           <div className="mb-3 flex items-center gap-1.5 px-1 text-white">
             <HanoutMark className="h-5 w-5" />
             <span className="font-display text-base font-black">حانوت</span>
