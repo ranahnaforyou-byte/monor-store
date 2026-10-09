@@ -32,7 +32,7 @@ export type CreateOrderResult =
 
 function makeReference(): string {
   const yy = new Date().getFullYear().toString().slice(-2);
-  return `MNR-${yy}-${randomDigits(6)}`;
+  return `HNT-${yy}-${randomDigits(6)}`;
 }
 
 /**

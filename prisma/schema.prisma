@@ -181,6 +181,13 @@ model Order {
   // BaridiMob
   baridimobRef String?
 
+  // Hanout «النظام» — confirmation desk + shipping choice
+  confirmAttempts     Int             @default(0)
+  lastOutcome         ConfirmOutcome?
+  lastOutcomeAt       DateTime?
+  customerConfirmedAt DateTime?
+  courier             String?
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   confirmedAt DateTime?
@@ -311,6 +318,76 @@ model AdminUser {
   updatedAt     DateTime  @updatedAt
 
   auditLogs AuditLog[]
+
+  // Hanout «النظام»
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  title        String? // e.g. "مسؤولة التأكيد"
+  messages     Message[]
+}
+
+// ---------------------------------------------------------------------------
+// Hanout «النظام» — departments, team chat, leads (expo demo)
+// ---------------------------------------------------------------------------
+
+enum ConfirmOutcome {
+  NO_ANSWER
+  POSTPONED
+  WRONG_NUMBER
+}
+
+enum MessageKind {
+  TEXT
+  SYSTEM
+}
+
+model Department {
+  id       String @id @default(cuid())
+  slug     String @unique // confirm | prepare | ship
+  name     String
+  position Int    @default(0)
+
+  members  AdminUser[]
+  channels Channel[]
+}
+
+model Channel {
+  id           String      @id @default(cuid())
+  slug         String      @unique // team | confirm | prepare | ship
+  name         String
+  position     Int         @default(0)
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+
+  messages Message[]
+}
+
+model Message {
+  id        String      @id @default(cuid())
+  channelId String
+  channel   Channel     @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  authorId  String?
+  author    AdminUser?  @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  kind      MessageKind @default(TEXT)
+  body      String
+  orderRef  String? // order reference this system message is about
+  tone      String? // new | confirmed | warning | done — styles system cards
+  createdAt DateTime    @default(now())
+
+  @@index([channelId, createdAt])
+}
+
+model Lead {
+  id             String   @id @default(cuid())
+  name           String
+  phone          String
+  activity       String // تاجر إلكتروني | حرفي | شركة | أخرى
+  monthlyOrders  String?
+  note           String?
+  source         String   @default("expo")
+  createdAt      DateTime @default(now())
+
+  @@index([createdAt])
 }
 
 model AuditLog {

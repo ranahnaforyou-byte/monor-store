@@ -28,6 +28,8 @@
     "backup:db": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --tsconfig tsconfig.scripts.json scripts/backup-db.ts",
     "seed:demo": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --tsconfig tsconfig.scripts.json scripts/seed-demo.ts",
     "clear:demo": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --tsconfig tsconfig.scripts.json scripts/clear-demo.ts",
+    "seed:hanout": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --tsconfig tsconfig.scripts.json scripts/seed-hanout.ts",
+    "gen:hanout-images": "tsx scripts/gen-hanout-images.ts",
     "add:admin": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --tsconfig tsconfig.scripts.json scripts/add-admin.ts"
   },
   "prisma": {

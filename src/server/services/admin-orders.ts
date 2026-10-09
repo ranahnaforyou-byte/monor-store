@@ -82,9 +82,12 @@ export async function changeOrderStatus(
         createdBy: adminId,
       },
     });
-    await tx.auditLog.create({
-      data: { adminUserId: adminId, action: "order.status", entity: "Order", entityId: orderId, diff: { from: order.status, to: next } },
-    });
+    // Customer self-service (Hanout confirmation link) has no admin row to audit.
+    if (adminId !== "customer" && adminId !== "system") {
+      await tx.auditLog.create({
+        data: { adminUserId: adminId, action: "order.status", entity: "Order", entityId: orderId, diff: { from: order.status, to: next } },
+      });
+    }
   });
 
   if (next === "CANCELLED" || next === "RETURNED") revalidateMany(tags.products);
