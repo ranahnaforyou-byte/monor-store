@@ -8,8 +8,8 @@ const T = {
   ar: {
     nav: [
       { href: "/#merchants", label: "للتجار" },
-      { href: "/#crafts", label: "للحرفيين" },
-      { href: "/#business", label: "للشركات" },
+      { href: "/crafts", label: "للحرفيين" },
+      { href: "/business", label: "للشركات" },
       { href: "/system", label: "النظام" },
     ],
     team: "دخول الفريق",
@@ -21,8 +21,8 @@ const T = {
   en: {
     nav: [
       { href: "/#merchants", label: "Merchants" },
-      { href: "/#crafts", label: "Artisans" },
-      { href: "/#business", label: "Business" },
+      { href: "/crafts", label: "Artisans" },
+      { href: "/business", label: "Business" },
       { href: "/system", label: "The System" },
     ],
     team: "Team login",

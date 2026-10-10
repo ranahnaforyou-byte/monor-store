@@ -142,7 +142,7 @@ export default async function HanoutHome() {
           </ProductCard>
           <ProductCard
             id="crafts-card"
-            href="#crafts"
+            href="/crafts"
             title={t.crafts.title}
             line={t.crafts.line}
             bg="bg-mint-soft"
@@ -156,7 +156,7 @@ export default async function HanoutHome() {
           </ProductCard>
           <ProductCard
             id="business-card"
-            href="#business"
+            href="/business"
             title={t.business.title}
             line={t.business.line}
             bg="bg-saffron-soft"
@@ -227,7 +227,7 @@ export default async function HanoutHome() {
         <div id="crafts" className="scroll-mt-20 rounded-[var(--radius-xl)] bg-mint-soft p-7">
           <h2 className="flex items-center gap-3 font-display text-3xl font-black">
             {t.cTitle}
-            <span className="rounded-full bg-paper px-3 py-1 font-sans text-xs font-bold text-[#0f7a52]">{t.soon}</span>
+            <a href="/crafts" className="rounded-full bg-mint-strong px-3 py-1 font-sans text-xs font-bold text-white">{t.tryIt}</a>
           </h2>
           <p className="mt-2 text-ink-soft">{t.cBody}</p>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -250,7 +250,7 @@ export default async function HanoutHome() {
         <div id="business" className="scroll-mt-20 rounded-[var(--radius-xl)] bg-saffron-soft p-7">
           <h2 className="flex items-center gap-3 font-display text-3xl font-black">
             {t.bTitle}
-            <span className="rounded-full bg-paper px-3 py-1 font-sans text-xs font-bold text-[#9a6d00]">{t.soon}</span>
+            <a href="/business" className="rounded-full bg-ink px-3 py-1 font-sans text-xs font-bold text-white">{t.tryIt}</a>
           </h2>
           <p className="mt-2 text-ink-soft">{t.bBody}</p>
           <div className="mt-4 flex flex-wrap gap-2">
