@@ -3,10 +3,39 @@
 import { useActionState } from "react";
 import { createLead, type LeadState } from "@/app/actions/lead";
 
-const ACTIVITIES = ["تاجر إلكتروني", "صانع محتوى", "حرفي", "شركة أو مقهى", "أخرى"];
-const VOLUMES = ["أقل من 100 طلب", "100 – 500 طلب", "500 – 2000 طلب", "أكثر من 2000 طلب"];
+const LT = {
+  ar: {
+    activities: ["تاجر إلكتروني", "صانع محتوى", "حرفي", "شركة أو مقهى", "أخرى"],
+    volumes: ["أقل من 100 طلب", "100 – 500 طلب", "500 – 2000 طلب", "أكثر من 2000 طلب"],
+    title: "سجّل اهتمامك",
+    name: "الاسم",
+    phone: "رقم الهاتف",
+    activity: "نوع النشاط",
+    volume: "عدد الطلبات في الشهر",
+    submit: "اتصلوا بي",
+    sending: "جارٍ الإرسال…",
+    doneTitle: "وصلنا رقمك، شكرًا",
+    doneBody: "نتصل بك قريبًا لنجهّز حانوت لنشاطك.",
+  },
+  en: {
+    activities: ["Online seller", "Content creator", "Artisan", "Company or café", "Other"],
+    volumes: ["Under 100 orders", "100 – 500 orders", "500 – 2,000 orders", "Over 2,000 orders"],
+    title: "Register your interest",
+    name: "Name",
+    phone: "Phone number",
+    activity: "Type of business",
+    volume: "Orders per month",
+    submit: "Call me",
+    sending: "Sending…",
+    doneTitle: "Got your number, thank you",
+    doneBody: "We'll call you soon to set up Hanout for your business.",
+  },
+} as const;
 
-export function LeadForm() {
+export function LeadForm({ lang = "ar" }: { lang?: "ar" | "en" }) {
+  const t = LT[lang];
+  const ACTIVITIES = t.activities;
+  const VOLUMES = t.volumes;
   const [state, action, pending] = useActionState<LeadState, FormData>(createLead, {});
 
   if (state.ok) {
@@ -17,22 +46,22 @@ export function LeadForm() {
             <path d="M20 6 9 17l-5-5" />
           </svg>
         </span>
-        <p className="mt-4 font-display text-2xl font-black">وصلنا رقمك، شكرًا</p>
-        <p className="mt-1 text-ink-soft">نتصل بك قريبًا لنجهّز حانوت لنشاطك.</p>
+        <p className="mt-4 font-display text-2xl font-black">{t.doneTitle}</p>
+        <p className="mt-1 text-ink-soft">{t.doneBody}</p>
       </div>
     );
   }
 
   return (
     <form action={action} className="rounded-[var(--radius-xl)] bg-paper p-6 text-ink shadow-[var(--shadow-lg)]">
-      <p className="font-display text-xl font-black">سجّل اهتمامك</p>
+      <p className="font-display text-xl font-black">{t.title}</p>
       <div className="mt-4 grid gap-3">
         <label className="grid gap-1 text-sm font-semibold">
-          الاسم
+          {t.name}
           <input name="name" required minLength={2} autoComplete="name" className="h-12 rounded-xl border border-line-strong bg-surface px-4 font-normal outline-none focus:border-brand" />
         </label>
         <label className="grid gap-1 text-sm font-semibold">
-          رقم الهاتف
+          {t.phone}
           <input
             name="phone"
             required
@@ -44,7 +73,7 @@ export function LeadForm() {
           />
         </label>
         <fieldset className="grid gap-1.5">
-          <legend className="mb-1 text-sm font-semibold">نوع النشاط</legend>
+          <legend className="mb-1 text-sm font-semibold">{t.activity}</legend>
           <div className="flex flex-wrap gap-2">
             {ACTIVITIES.map((a, i) => (
               <label key={a} className="cursor-pointer">
@@ -57,7 +86,7 @@ export function LeadForm() {
           </div>
         </fieldset>
         <label className="grid gap-1 text-sm font-semibold">
-          عدد الطلبات في الشهر
+          {t.volume}
           <select name="monthlyOrders" className="h-12 rounded-xl border border-line-strong bg-surface px-3 font-normal outline-none focus:border-brand">
             {VOLUMES.map((v) => (
               <option key={v}>{v}</option>
@@ -67,7 +96,7 @@ export function LeadForm() {
       </div>
       {state.error && <p className="mt-3 text-sm font-semibold text-coral-strong">{state.error}</p>}
       <button disabled={pending} className="mt-5 h-12 w-full rounded-2xl bg-saffron text-base font-black text-ink disabled:opacity-60">
-        {pending ? "جارٍ الإرسال…" : "اتصلوا بي"}
+        {pending ? t.sending : t.submit}
       </button>
     </form>
   );

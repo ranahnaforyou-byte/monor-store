@@ -53,7 +53,7 @@ export function Swash({ className }: { className?: string }) {
   );
 }
 
-export function DemoTag({ className }: { className?: string }) {
+export function DemoTag({ className, lang = "ar" }: { className?: string; lang?: "ar" | "en" }) {
   return (
     <span
       className={cn(
@@ -61,7 +61,7 @@ export function DemoTag({ className }: { className?: string }) {
         className,
       )}
     >
-      بيانات تجريبية
+      {lang === "en" ? "Demo data" : "بيانات تجريبية"}
     </span>
   );
 }

@@ -111,10 +111,51 @@ const T = {
     errLocked: "Cette commande ne peut plus être modifiée",
     poweredBy: "Confirmation par",
   },
+  en: {
+    notifTitle: "Confirm your order",
+    notifBody: (r: string, s: string) => `Your order ${r} from ${s} is waiting for your confirmation`,
+    now: "now",
+    title: "Confirm my order",
+    sub: "Your confirmation starts the packing right away.",
+    qty: "Quantity",
+    address: "Delivery address",
+    edit: "Edit address",
+    save: "Save",
+    total: "Total",
+    cod: "Cash on delivery",
+    demo: "Demo data",
+    yes: "Yes, I confirm",
+    cancel: "Cancel",
+    cancelSure: "Do you really want to cancel the order?",
+    confirmedTitle: "Thank you, order confirmed",
+    confirmedSub: "The team is preparing your parcel. Follow it here live.",
+    shippedTitle: "Your order is on its way",
+    shippedSub: "Handed to the courier. Have the amount ready on delivery.",
+    deliveredTitle: "Order delivered, thank you",
+    deliveredSub: "We hope you love it.",
+    cancelledTitle: "Order cancelled",
+    cancelledSub: "You can order again anytime.",
+    track: "Order tracking",
+    byYou: "confirmed by you",
+    steps: {
+      placed: "Order received",
+      confirmed: "Order confirmed",
+      prepared: "Packed",
+      shipped: "On the way",
+      delivered: "Delivered",
+    },
+    by: "by",
+    with: "with",
+    live: "live updates",
+    contact: "Contact the store",
+    errAddress: "Address too short",
+    errLocked: "This order can no longer be changed",
+    poweredBy: "Confirmation by",
+  },
 } as const;
 
 export function OrderConfirmView(p: ConfirmViewProps) {
-  const [lang, setLang] = useState<"ar" | "fr">("ar");
+  const [lang, setLang] = useState<"ar" | "fr" | "en">("ar");
   const t = T[lang];
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState(false);
@@ -168,14 +209,14 @@ export function OrderConfirmView(p: ConfirmViewProps) {
           </span>
         </span>
         <div className="flex rounded-full border border-line bg-paper p-0.5 text-xs font-bold">
-          {(["ar", "fr"] as const).map((l) => (
+          {(["ar", "fr", "en"] as const).map((l) => (
             <button
               key={l}
               type="button"
               onClick={() => setLang(l)}
-              className={cn("rounded-full px-3 py-1", lang === l ? "bg-brand text-white" : "text-muted")}
+              className={cn("rounded-full px-2.5 py-1", lang === l ? "bg-brand text-white" : "text-muted")}
             >
-              {l === "ar" ? "العربية" : "Français"}
+              {l === "ar" ? "العربية" : l === "fr" ? "Français" : "English"}
             </button>
           ))}
         </div>

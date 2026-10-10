@@ -10,11 +10,13 @@ import { LeadForm } from "@/components/hanout/lead-form";
 import { HanoutMark, Swash } from "@/components/hanout/logo";
 import { HANOUT_CONTACT } from "@/config/hanout";
 import { timeAgo, serverNow } from "@/lib/hanout/format";
+import { getHnLang } from "@/lib/hanout/lang";
+import { HOME } from "@/lib/hanout/home-copy";
 
-export const metadata: Metadata = {
-  title: { absolute: "حانوت — كلّ واحد ودوره" },
-  description: "حانوت يرتّب طلباتك وفريقك: تأكيد الطلبات تلقائيًا، أقسام وأدوار، ومحادثة لكل قسم. من أول طلب حتى التسليم.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = HOME[await getHnLang()];
+  return { title: { absolute: t.metaTitle }, description: t.metaDesc };
+}
 export const dynamic = "force-dynamic";
 
 export default async function HanoutHome() {
@@ -25,32 +27,34 @@ export default async function HanoutHome() {
     include: { items: { take: 1 } },
   });
   const now = serverNow();
+  const lang = await getHnLang();
+  const t = HOME[lang];
 
   return (
-    <>
+    <div dir={lang === "en" ? "ltr" : "rtl"} lang={lang}>
       <LiveRefresh ms={2500} />
-      <SiteHeader />
+      <SiteHeader lang={lang} />
 
       {/* Hero */}
       <section className="zellige relative overflow-hidden">
         <div className="mx-auto max-w-[1240px] px-4 pb-10 pt-12 text-center sm:px-6 md:pt-16 lg:px-8">
           <h1 className="font-display text-[56px] font-black leading-[1.05] tracking-tight text-[#0d2b22] sm:text-[84px] lg:text-[96px]">
-            كلّ{" "}
+            {t.heroPre}{" "}
             <span className="relative inline-block">
-              واحد
+              {t.heroMark}
               <Swash className="-bottom-1 h-[0.22em]" />
-            </span>{" "}
-            ودوره
+            </span>
+            {t.heroPost ? ` ${t.heroPost}` : ""}
           </h1>
           <p className="mx-auto mt-5 max-w-[44ch] text-lg text-ink-soft sm:text-xl">
-            نظام يرتّب طلباتك وفريقك.. من أول طلب حتى التسليم.
+            {t.heroSub}
           </p>
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href="/shop" className="inline-flex h-12 items-center rounded-full bg-brand px-7 text-base font-bold text-white hover:bg-brand-hover">
-              اطلب من المتجر كزبون
+              {t.ctaShop}
             </Link>
             <Link href="/team" className="inline-flex h-12 items-center rounded-full border border-line-strong bg-paper px-7 text-base font-bold">
-              ادخل كأحد أفراد الفريق
+              {t.ctaTeam}
             </Link>
           </div>
         </div>
@@ -61,9 +65,9 @@ export default async function HanoutHome() {
             {/* QR (first in RTL = right side) */}
             <div className="hidden xl:block">
               <div className="hn-card mx-auto w-[220px] p-5 text-center">
-                <p className="font-display text-lg font-black">جرّبه من هاتفك</p>
+                <p className="font-display text-lg font-black">{t.qrTitle}</p>
                 <QrSvg path="/shop" className="mx-auto mt-3 w-[150px] rounded-lg border-2 border-brand/20 p-2 [&_svg]:h-auto [&_svg]:w-full" />
-                <p className="mt-3 inline-flex rounded-full bg-surface-2 px-3 py-1 text-xs font-bold">امسح واطلب، ثم شاهد الطلب يصل هنا</p>
+                <p className="mt-3 inline-flex rounded-full bg-surface-2 px-3 py-1 text-xs font-bold">{t.qrHint}</p>
               </div>
             </div>
 
@@ -71,7 +75,7 @@ export default async function HanoutHome() {
             <div className="mx-auto w-full min-w-0 max-w-[860px]">
               <div className="rounded-[22px] bg-[#1b2421] p-2.5 shadow-[var(--shadow-lg)] sm:p-3">
                 <div className="h-[330px] overflow-hidden rounded-[14px] sm:h-[380px]">
-                  <SystemBoard />
+                  <SystemBoard lang={lang} />
                 </div>
               </div>
               <div className="mx-auto h-3 w-[104%] -translate-x-[2%] rounded-b-2xl bg-gradient-to-b from-[#cfd5d2] to-[#aeb6b2] rtl:translate-x-[2%]" />
@@ -84,23 +88,23 @@ export default async function HanoutHome() {
                   <div className="flex items-center justify-between border-b border-line bg-paper px-3 py-2.5">
                     <span className="inline-flex items-center gap-1 text-brand">
                       <HanoutMark className="h-4 w-4" />
-                      <span className="font-display text-sm font-black">حانوت</span>
+                      <span className="font-display text-sm font-black">{t.phoneBrand}</span>
                     </span>
-                    <span className="text-[10px] font-bold text-coral-strong">قسم التأكيد</span>
+                    <span className="text-[10px] font-bold text-coral-strong">{t.phoneDept}</span>
                   </div>
-                  <p className="px-3 pb-1 pt-3 font-display text-base font-black">طلب جديد</p>
+                  <p className="px-3 pb-1 pt-3 font-display text-base font-black">{t.phoneTitle}</p>
                   <ul className="space-y-2 px-2.5">
-                    {latest.length === 0 && <li className="rounded-xl bg-paper p-3 text-center text-[11px] text-muted">في انتظار أول طلب…</li>}
+                    {latest.length === 0 && <li className="rounded-xl bg-paper p-3 text-center text-[11px] text-muted">{t.phoneEmpty}</li>}
                     {latest.map((o, i) => (
                       <li key={o.id} className={`rounded-xl border bg-paper p-2.5 ${i === 0 ? "anim-pop border-coral/60" : "border-line"}`}>
                         <div className="flex items-center justify-between">
                           <span className="num text-xs font-bold">{shortRef(o.reference)}</span>
-                          <span className="text-[10px] text-muted">{timeAgo(o.createdAt, now)}</span>
+                          <span className="text-[10px] text-muted">{timeAgo(o.createdAt, now, lang)}</span>
                         </div>
                         <p className="truncate text-[12px] font-semibold">{o.customerName}</p>
                         <p className="truncate text-[10px] text-muted">{o.items[0]?.nameSnapshot}</p>
                         <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-coral-strong">
-                          <span className="h-1.5 w-1.5 rounded-full bg-coral" /> قيد التأكيد
+                          <span className="h-1.5 w-1.5 rounded-full bg-coral" /> {t.phoneStatus}
                         </span>
                       </li>
                     ))}
@@ -118,9 +122,9 @@ export default async function HanoutHome() {
           <ProductCard
             id="merchants-card"
             href="#merchants"
-            title="للتجار"
-            line="رابط تأكيد يعمل مع أي متجر"
-            pill="تأكيد الطلبات تلقائيًا"
+            title={t.merchants.title}
+            line={t.merchants.line}
+            pill={t.merchants.pill}
             bg="bg-coral-soft"
             accent="bg-coral"
             icon={<path d="M4 9h16l-1.5 10.5a2 2 0 0 1-2 1.5h-9a2 2 0 0 1-2-1.5zM8 9V7a4 4 0 0 1 8 0v2" />}
@@ -132,39 +136,35 @@ export default async function HanoutHome() {
                   <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden><path d="M20 6 9 17l-5-5" /></svg>
                 </span>
               </div>
-              <p className="mt-1 text-xs text-ink-soft">تم تأكيد الطلب بواسطة الزبون</p>
-              <div className="mt-2 h-8 rounded-lg bg-brand text-center text-xs font-bold leading-8 text-white">نعم، أؤكد طلبي</div>
+              <p className="mt-1 text-xs text-ink-soft">{t.merchants.confirmedBy}</p>
+              <div className="mt-2 h-8 rounded-lg bg-brand text-center text-xs font-bold leading-8 text-white">{t.merchants.yes}</div>
             </div>
           </ProductCard>
           <ProductCard
             id="crafts-card"
             href="#crafts"
-            title="للحرفيين"
-            line="أقرب حرفي، طلب، ومحادثة"
+            title={t.crafts.title}
+            line={t.crafts.line}
             bg="bg-mint-soft"
             accent="bg-[#13996a]"
             icon={<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z" />}
           >
             <div className="space-y-2 rounded-xl bg-paper p-3 shadow-[var(--shadow-sm)]">
-              <p className="max-w-[85%] rounded-xl rounded-es-sm bg-surface px-3 py-1.5 text-xs">هل يمكن إصلاح تسرّب الماء اليوم؟</p>
-              <p className="ms-auto max-w-[85%] rounded-xl rounded-ee-sm bg-mint-soft px-3 py-1.5 text-xs font-semibold text-[#0f7a52]">نعم، أصل بعد 30 دقيقة</p>
+              <p className="max-w-[85%] rounded-xl rounded-es-sm bg-surface px-3 py-1.5 text-xs">{t.crafts.q}</p>
+              <p className="ms-auto max-w-[85%] rounded-xl rounded-ee-sm bg-mint-soft px-3 py-1.5 text-xs font-semibold text-[#0f7a52]">{t.crafts.a}</p>
             </div>
           </ProductCard>
           <ProductCard
             id="business-card"
             href="#business"
-            title="للشركات"
-            line="قالب جاهز لتنظيم فريقك"
+            title={t.business.title}
+            line={t.business.line}
             bg="bg-saffron-soft"
             accent="bg-saffron"
             icon={<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" />}
           >
             <div className="space-y-1.5 rounded-xl bg-paper p-3 shadow-[var(--shadow-sm)]">
-              {[
-                ["خالد", "مدير"],
-                ["مريم", "استقبال"],
-                ["يوسف", "تنفيذ"],
-              ].map(([n, r]) => (
+              {t.business.people.map(([n, r]) => (
                 <div key={n} className="flex items-center gap-2 text-xs">
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-saffron-soft text-[10px] font-bold text-[#9a6d00]">{n[0]}</span>
                   <span className="flex-1 font-semibold">{n}</span>
@@ -181,24 +181,19 @@ export default async function HanoutHome() {
         <div className="mx-auto grid max-w-[1240px] items-center gap-10 px-4 sm:px-6 md:grid-cols-2 lg:px-8">
           <div>
             <h2 className="font-display text-4xl font-black leading-tight sm:text-5xl">
-              كل طلب يُؤكَّد
+              {t.mTitle1}
               <br />
-              قبل أن يُشحن
+              {t.mTitle2}
             </h2>
             <p className="mt-4 max-w-[46ch] text-ink-soft">
-              أغلب الطلبات في الجزائر تُدفع عند الاستلام، والطلب غير المؤكَّد يرجع ويكلّفك. حانوت يرسل للزبون رابط تأكيد، ويضع
-              كل طلب في قسمه: التأكيد، ثم التحضير، ثم الشحن — وكل خطوة تظهر في جروب القسم.
+              {t.mBody}
             </p>
             <ol className="mt-6 space-y-3">
-              {[
-                ["الزبون يطلب", "من متجرك على حانوت أو من أي متجر آخر عبر رابط التأكيد."],
-                ["يؤكّد بنقرة", "أو يتصل به مؤكِّد من فريقك: لم يرد، مؤجل، رقم خاطئ — كل شيء مسجّل."],
-                ["فريقك يحضّر ويشحن", "الطلب ينتقل وحده للقسم التالي، والزبون يتابعه لحظة بلحظة."],
-              ].map(([t, d], i) => (
-                <li key={t} className="flex gap-3">
+              {t.steps.map(([st, d], i) => (
+                <li key={st} className="flex gap-3">
                   <span className="num flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-black text-white">{i + 1}</span>
                   <span>
-                    <span className="block font-bold">{t}</span>
+                    <span className="block font-bold">{st}</span>
                     <span className="block text-sm text-ink-soft">{d}</span>
                   </span>
                 </li>
@@ -206,18 +201,14 @@ export default async function HanoutHome() {
             </ol>
           </div>
           <div className="hn-card p-6">
-            <p className="text-sm font-bold text-ink-soft">شركات التوصيل في قسم الشحن</p>
+            <p className="text-sm font-bold text-ink-soft">{t.couriers}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {COURIERS.map((c) => (
                 <span key={c} className="rounded-full border border-line-strong bg-surface px-4 py-2 text-sm font-bold">{c}</span>
               ))}
             </div>
             <div className="mt-6 grid grid-cols-3 gap-3 text-center">
-              {[
-                ["58", "ولاية"],
-                ["COD", "الدفع عند الاستلام"],
-                ["AR · FR", "صفحة التأكيد"],
-              ].map(([v, l]) => (
+              {t.facts.map(([v, l]) => (
                 <div key={l} className="rounded-2xl bg-surface p-3">
                   <p className="num font-display text-2xl font-black text-brand">{v}</p>
                   <p className="text-xs text-muted">{l}</p>
@@ -225,7 +216,7 @@ export default async function HanoutHome() {
               ))}
             </div>
             <Link href="/shop" className="mt-6 flex h-12 items-center justify-center rounded-2xl bg-brand font-bold text-white">
-              جرّب: اطلب من متجر نور
+              {t.tryShop}
             </Link>
           </div>
         </div>
@@ -235,44 +226,44 @@ export default async function HanoutHome() {
       <section className="mx-auto grid max-w-[1240px] gap-4 px-4 py-16 sm:px-6 md:grid-cols-2 lg:px-8">
         <div id="crafts" className="scroll-mt-20 rounded-[var(--radius-xl)] bg-mint-soft p-7">
           <h2 className="flex items-center gap-3 font-display text-3xl font-black">
-            للحرفيين
-            <span className="rounded-full bg-paper px-3 py-1 font-sans text-xs font-bold text-[#0f7a52]">قريبًا</span>
+            {t.cTitle}
+            <span className="rounded-full bg-paper px-3 py-1 font-sans text-xs font-bold text-[#0f7a52]">{t.soon}</span>
           </h2>
-          <p className="mt-2 text-ink-soft">الزبون يطلب أقرب حرفي، والورشة توزّع العمل على مساعديها — بنفس النظام.</p>
+          <p className="mt-2 text-ink-soft">{t.cBody}</p>
           <div className="mt-4 flex flex-wrap gap-2">
-            {["سباكة", "كهرباء", "تكييف", "دهان", "نجارة", "تنظيف"].map((x) => (
+            {t.cTags.map((x) => (
               <span key={x} className="rounded-full bg-paper px-3 py-1.5 text-sm font-semibold">{x}</span>
             ))}
           </div>
           <div className="mt-5 rounded-2xl border border-coral/40 bg-paper p-4">
             <div className="flex items-center justify-between">
-              <p className="font-bold">طلب عمل جديد · تسرّب ماء</p>
-              <span className="num text-xs text-muted">2.3 كم</span>
+              <p className="font-bold">{t.cJob}</p>
+              <span className="num text-xs text-muted">{t.cKm}</span>
             </div>
-            <p className="text-sm text-muted">باب الزوار · اليوم 15:00</p>
+            <p className="text-sm text-muted">{t.cWhere}</p>
             <div className="mt-3 grid grid-cols-2 gap-2">
-              <span className="rounded-xl bg-brand py-2 text-center text-sm font-bold text-white">قبول</span>
-              <span className="rounded-xl border border-line-strong py-2 text-center text-sm font-bold">رفض</span>
+              <span className="rounded-xl bg-brand py-2 text-center text-sm font-bold text-white">{t.accept}</span>
+              <span className="rounded-xl border border-line-strong py-2 text-center text-sm font-bold">{t.decline}</span>
             </div>
           </div>
         </div>
         <div id="business" className="scroll-mt-20 rounded-[var(--radius-xl)] bg-saffron-soft p-7">
           <h2 className="flex items-center gap-3 font-display text-3xl font-black">
-            للشركات
-            <span className="rounded-full bg-paper px-3 py-1 font-sans text-xs font-bold text-[#9a6d00]">قريبًا</span>
+            {t.bTitle}
+            <span className="rounded-full bg-paper px-3 py-1 font-sans text-xs font-bold text-[#9a6d00]">{t.soon}</span>
           </h2>
-          <p className="mt-2 text-ink-soft">اختر قالبًا جاهزًا وحدّد الأقسام والأدوار: كل موظف يرى مهامه وجروب قسمه.</p>
+          <p className="mt-2 text-ink-soft">{t.bBody}</p>
           <div className="mt-4 flex flex-wrap gap-2">
-            {["مقهى", "مركز تكوين", "وكالة", "ورشة"].map((x) => (
+            {t.bTags.map((x) => (
               <span key={x} className="rounded-full bg-paper px-3 py-1.5 text-sm font-semibold">{x}</span>
             ))}
           </div>
           <div className="mt-5 grid grid-cols-4 gap-2 text-center text-xs font-bold">
             {[
-              ["جديد", "bg-coral-soft text-coral-strong"],
-              ["مؤكد", "bg-paper text-ink"],
-              ["قيد الإنجاز", "bg-saffron text-ink"],
-              ["مكتمل", "bg-mint-strong text-white"],
+              [t.bStages[0], "bg-coral-soft text-coral-strong"],
+              [t.bStages[1], "bg-paper text-ink"],
+              [t.bStages[2], "bg-saffron text-ink"],
+              [t.bStages[3], "bg-mint-strong text-white"],
             ].map(([l, c]) => (
               <span key={l} className={`rounded-xl px-1 py-3 ${c}`}>{l}</span>
             ))}
@@ -284,23 +275,23 @@ export default async function HanoutHome() {
       <section id="start" className="scroll-mt-20 bg-brand py-16 text-white">
         <div className="mx-auto grid max-w-[1240px] items-start gap-10 px-4 sm:px-6 md:grid-cols-2 lg:px-8">
           <div>
-            <h2 className="font-display text-4xl font-black leading-tight sm:text-5xl">نرتّب لك فريقك؟</h2>
-            <p className="mt-4 max-w-[42ch] text-white/85">اترك رقمك ونتصل بك لنجهّز حانوت لمتجرك أو ورشتك أو شركتك.</p>
+            <h2 className="font-display text-4xl font-black leading-tight sm:text-5xl">{t.leadTitle}</h2>
+            <p className="mt-4 max-w-[42ch] text-white/85">{t.leadBody}</p>
             <div className="mt-6 flex flex-wrap gap-2">
               <a href={HANOUT_CONTACT.whatsapp} target="_blank" rel="noreferrer" className="rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-bold text-white">
-                راسلنا على WhatsApp
+                {t.whatsapp}
               </a>
               <a href={HANOUT_CONTACT.telegram} target="_blank" rel="noreferrer" className="rounded-full bg-[#229ED9] px-5 py-2.5 text-sm font-bold text-white">
                 Telegram
               </a>
             </div>
           </div>
-          <LeadForm />
+          <LeadForm lang={lang} />
         </div>
       </section>
 
-      <SiteFooter />
-    </>
+      <SiteFooter lang={lang} />
+    </div>
   );
 }
 
@@ -346,7 +337,7 @@ function ProductCard({
       )}
       <div className="mt-5">{children}</div>
       <span className={`mt-5 flex h-11 w-11 items-center justify-center rounded-full text-white ${accent}`}>
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+        <svg viewBox="0 0 24 24" className="h-5 w-5 ltr:-scale-x-100" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
       </span>
     </Link>
   );

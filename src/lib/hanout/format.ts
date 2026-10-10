@@ -1,13 +1,14 @@
-/** Arabic relative time: الآن · منذ 5 د · منذ 2 س · أمس */
-export function timeAgo(date: Date | string, now = Date.now()): string {
+/** Relative time: الآن · منذ 5 د · منذ 2 س · أمس (or English: now · 5m ago · 2h ago · yesterday) */
+export function timeAgo(date: Date | string, now = Date.now(), lang: "ar" | "en" = "ar"): string {
   const d = typeof date === "string" ? new Date(date) : date;
   const s = Math.max(0, Math.round((now - d.getTime()) / 1000));
-  if (s < 45) return "الآن";
+  const en = lang === "en";
+  if (s < 45) return en ? "now" : "الآن";
   const m = Math.round(s / 60);
-  if (m < 60) return `منذ ${m} د`;
+  if (m < 60) return en ? `${m}m ago` : `منذ ${m} د`;
   const h = Math.round(m / 60);
-  if (h < 24) return `منذ ${h} س`;
-  return "أمس";
+  if (h < 24) return en ? `${h}h ago` : `منذ ${h} س`;
+  return en ? "yesterday" : "أمس";
 }
 
 export function clock(date: Date | string): string {

@@ -8,8 +8,63 @@ import { Avatar } from "@/components/hanout/avatar";
 import { Swash } from "@/components/hanout/logo";
 import { clock } from "@/lib/hanout/format";
 import { cn } from "@/lib/utils";
+import { getHnLang } from "@/lib/hanout/lang";
 
-export const metadata: Metadata = { title: "النظام", description: "أدوار واضحة، تواصل سلس، ومتابعة دقيقة لكل طلب." };
+const ST = {
+  ar: {
+    title: "النظام",
+    motto: "كلّ واحد ودوره",
+    sub: "أدوار واضحة، تواصل سلس، ومتابعة دقيقة لكل طلب.",
+    chat: "محادثة الفريق",
+    chatDept: "قسم التأكيد",
+    system: "النظام",
+    write: "اكتب رسالة لفريق القسم…",
+    path: "مسار الطلب",
+    pathSub: "متابعة مراحل الطلب بشكل لحظي",
+    live: "مباشر",
+    order: "طلب",
+    products: "منتج",
+    waiting: "في انتظار أول طلب…",
+    pending: "في الانتظار",
+    orderNo: "رقم الطلب",
+    productsLabel: "المنتجات",
+    customer: "العميل",
+    roles: "الأدوار والصلاحيات",
+    rolesSub: "كل عضو له دوره وصلاحياته المحددة",
+    tryRole: "ادخل وجرّب دورًا",
+    roleNames: [["مالك", "إدارة النظام"], ["مدير", "متابعة الفريق"], ["مسؤول قسم", "توزيع الطلبات"], ["موظف", "تنفيذ المهام"]],
+    steps: [["تأكيد", "تم التأكيد", "قيد التأكيد"], ["تحضير", "تم التحضير", "قيد التحضير"], ["شحن", "تم الشحن", "في الانتظار"]],
+  },
+  en: {
+    title: "The System",
+    motto: "Everyone has a role",
+    sub: "Clear roles, smooth communication, and precise tracking of every order.",
+    chat: "Team chat",
+    chatDept: "Confirmation department",
+    system: "System",
+    write: "Write to the department team…",
+    path: "Order path",
+    pathSub: "Every stage, tracked live",
+    live: "Live",
+    order: "Order",
+    products: "items",
+    waiting: "Waiting for the first order…",
+    pending: "Waiting",
+    orderNo: "Order no.",
+    productsLabel: "Items",
+    customer: "Customer",
+    roles: "Roles and permissions",
+    rolesSub: "Every member has a defined role and permissions",
+    tryRole: "Try a role",
+    roleNames: [["Owner", "Runs the system"], ["Manager", "Follows the team"], ["Department lead", "Assigns orders"], ["Staff", "Does the tasks"]],
+    steps: [["Confirm", "Confirmed", "Confirming"], ["Pack", "Packed", "Packing"], ["Ship", "Shipped", "Waiting"]],
+  },
+} as const;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = ST[await getHnLang()];
+  return { title: t.title, description: t.sub };
+}
 export const dynamic = "force-dynamic";
 
 const ROLES = [
@@ -34,22 +89,24 @@ export default async function SystemPage() {
   const stepTimes = order
     ? [order.confirmedAt ?? at("PENDING → CONFIRMED"), at("CONFIRMED → PREPARING"), order.shippedAt]
     : [null, null, null];
-  const current = stepTimes.findIndex((t) => !t);
+  const current = stepTimes.findIndex((x) => !x);
+  const lang = await getHnLang();
+  const t = ST[lang];
 
   return (
-    <>
+    <div dir={lang === "en" ? "ltr" : "rtl"} lang={lang}>
       <LiveRefresh ms={2500} />
-      <SiteHeader active="/system" />
+      <SiteHeader active="/system" lang={lang} />
       <section className="zellige">
         <div className="mx-auto max-w-[1240px] px-4 pb-6 pt-10 text-center sm:px-6 lg:px-8">
           <h1 className="font-display text-[64px] font-black leading-none text-[#0d2b22] sm:text-[96px]">
             <span className="relative inline-block">
-              النظام
+              {t.title}
               <Swash className="-bottom-2 h-[0.2em]" />
             </span>
           </h1>
-          <p className="mt-6 font-display text-2xl font-black sm:text-3xl">كلّ واحد ودوره</p>
-          <p className="mt-2 text-ink-soft">أدوار واضحة، تواصل سلس، ومتابعة دقيقة لكل طلب.</p>
+          <p className="mt-6 font-display text-2xl font-black sm:text-3xl">{t.motto}</p>
+          <p className="mt-2 text-ink-soft">{t.sub}</p>
         </div>
       </section>
 
@@ -61,8 +118,8 @@ export default async function SystemPage() {
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1.2-4.6A8 8 0 1 1 21 12z" /></svg>
             </span>
             <div>
-              <h2 className="font-display text-xl font-black">محادثة الفريق</h2>
-              <p className="text-sm text-ink-soft">قسم التأكيد</p>
+              <h2 className="font-display text-xl font-black">{t.chat}</h2>
+              <p className="text-sm text-ink-soft">{t.chatDept}</p>
             </div>
           </div>
           <ul className="flex-1 space-y-3 p-4">
@@ -77,7 +134,7 @@ export default async function SystemPage() {
                 )}
                 <div className="min-w-0 flex-1 rounded-2xl bg-surface px-3 py-2">
                   <div className="flex items-center justify-between text-[11px] text-muted">
-                    <span className="font-bold text-ink-soft">{m.author?.name.split(" ")[0] ?? "النظام"}</span>
+                    <span className="font-bold text-ink-soft">{m.author?.name.split(" ")[0] ?? t.system}</span>
                     <span className="num">{clock(m.createdAt)}</span>
                   </div>
                   <p className="text-sm font-semibold leading-relaxed">{m.body}</p>
@@ -86,9 +143,9 @@ export default async function SystemPage() {
             ))}
           </ul>
           <Link href="/team" className="m-4 mt-0 flex h-12 items-center justify-between rounded-full border border-line-strong px-4 text-sm text-muted">
-            اكتب رسالة لفريق القسم…
+            {t.write}
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand text-white">
-              <svg viewBox="0 0 24 24" className="h-4 w-4 -scale-x-100" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" /></svg>
+              <svg viewBox="0 0 24 24" className="h-4 w-4 rtl:-scale-x-100" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" /></svg>
             </span>
           </Link>
         </div>
@@ -97,11 +154,11 @@ export default async function SystemPage() {
         <div className="hn-card overflow-hidden">
           <div className="flex items-center justify-between px-5 pt-5">
             <div>
-              <h2 className="font-display text-xl font-black">مسار الطلب</h2>
-              <p className="text-sm text-muted">متابعة مراحل الطلب بشكل لحظي</p>
+              <h2 className="font-display text-xl font-black">{t.path}</h2>
+              <p className="text-sm text-muted">{t.pathSub}</p>
             </div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-mint-soft px-3 py-1 text-xs font-bold text-[#0f7a52]">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-mint" /> مباشر
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-mint" /> {t.live}
             </span>
           </div>
           {order ? (
@@ -112,10 +169,10 @@ export default async function SystemPage() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold">
-                    طلب <span className="num">{shortRef(order.reference)}</span>
+                    {t.order} <span className="num">{shortRef(order.reference)}</span>
                   </p>
                   <p className="truncate text-sm text-muted">
-                    {order.items.reduce((s, i) => s + i.quantity, 0)} منتج · {order.wilayaName}
+                    {order.items.reduce((n, i) => n + i.quantity, 0)} {t.products} · {order.wilayaName}
                   </p>
                 </div>
                 <span className="num text-sm text-muted">{clock(order.createdAt)}</span>
@@ -127,7 +184,7 @@ export default async function SystemPage() {
                   const isCurrent = i === current;
                   return (
                     <div key={s.key} className={cn("rounded-2xl p-3 text-center", done || isCurrent ? s.soft : "bg-surface")}>
-                      <p className="font-display text-lg font-black">{s.label}</p>
+                      <p className="font-display text-lg font-black">{t.steps[i][0]}</p>
                       <span
                         className={cn(
                           "mx-auto mt-2 flex h-11 w-11 items-center justify-center rounded-full text-white",
@@ -140,7 +197,7 @@ export default async function SystemPage() {
                           <span className="text-lg font-black leading-none">…</span>
                         )}
                       </span>
-                      <p className={cn("mt-2 text-xs font-bold", done ? "text-ink" : "text-muted")}>{done ? s.done : isCurrent ? s.wait : "في الانتظار"}</p>
+                      <p className={cn("mt-2 text-xs font-bold", done ? "text-ink" : "text-muted")}>{done ? t.steps[i][1] : isCurrent ? t.steps[i][2] : t.pending}</p>
                       <p className="num mt-0.5 text-[11px] text-muted">{stepTimes[i] ? clock(stepTimes[i]!) : "--"}</p>
                     </div>
                   );
@@ -149,9 +206,9 @@ export default async function SystemPage() {
 
               <div className="mx-5 mb-5 grid grid-cols-3 divide-x divide-line rounded-2xl border border-line text-center rtl:divide-x-reverse">
                 {[
-                  ["رقم الطلب", shortRef(order.reference)],
-                  ["المنتجات", `${order.items.length} منتج`],
-                  ["العميل", order.customerName.split(" ")[0]],
+                  [t.orderNo, shortRef(order.reference)],
+                  [t.productsLabel, `${order.items.length} ${t.products}`],
+                  [t.customer, order.customerName.split(" ")[0]],
                 ].map(([l, v]) => (
                   <div key={l} className="px-2 py-3">
                     <p className="text-[11px] text-muted">{l}</p>
@@ -161,15 +218,15 @@ export default async function SystemPage() {
               </div>
             </>
           ) : (
-            <p className="p-10 text-center text-muted">في انتظار أول طلب…</p>
+            <p className="p-10 text-center text-muted">{t.waiting}</p>
           )}
         </div>
 
         {/* Roles (left in RTL) */}
         <div className="hn-card overflow-hidden">
           <div className="bg-brand-soft px-5 py-4">
-            <h2 className="font-display text-xl font-black">الأدوار والصلاحيات</h2>
-            <p className="text-sm text-ink-soft">كل عضو له دوره وصلاحياته المحددة</p>
+            <h2 className="font-display text-xl font-black">{t.roles}</h2>
+            <p className="text-sm text-ink-soft">{t.rolesSub}</p>
           </div>
           <ul className="space-y-2.5 p-4">
             {ROLES.map((r, i) => {
@@ -182,8 +239,8 @@ export default async function SystemPage() {
                     </svg>
                   </span>
                   <div className="flex-1">
-                    <p className="font-display text-lg font-black leading-tight">{r.title}</p>
-                    <p className="text-sm text-muted">{r.does}</p>
+                    <p className="font-display text-lg font-black leading-tight">{t.roleNames[i][0]}</p>
+                    <p className="text-sm text-muted">{t.roleNames[i][1]}</p>
                   </div>
                   {m && <Avatar user={m} />}
                 </li>
@@ -191,11 +248,11 @@ export default async function SystemPage() {
             })}
           </ul>
           <Link href="/team" className="mx-4 mb-4 flex h-12 items-center justify-center rounded-2xl bg-brand font-bold text-white">
-            ادخل وجرّب دورًا
+            {t.tryRole}
           </Link>
         </div>
       </section>
-      <SiteFooter />
-    </>
+      <SiteFooter lang={lang} />
+    </div>
   );
 }

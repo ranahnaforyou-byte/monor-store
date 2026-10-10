@@ -27,7 +27,12 @@ export async function createLead(_prev: LeadState, fd: FormData): Promise<LeadSt
   });
   if (!parsed.success) {
     const field = parsed.error.issues[0]?.path[0];
-    return { error: field === "phone" ? "رقم الهاتف غير صحيح (مثال: 0661234567)" : "أكمل الاسم ونوع النشاط" };
+    return {
+      error:
+        field === "phone"
+          ? "رقم الهاتف غير صحيح (مثال: 0661234567) · Invalid phone number"
+          : "أكمل الاسم ونوع النشاط · Please complete your name and business type",
+    };
   }
   await db.lead.create({ data: { ...parsed.data, source: "expo" } });
   return { ok: true };
