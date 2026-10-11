@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { ROLES, act, unread, useWorld, type Role } from "./store";
+import { SessionBar } from "./session";
+import { ROLES, act, unreadCount, useRead, useWorld, type Role } from "./store";
 import { DemoCtx, focus } from "./ui";
 import { AccountingView } from "./views/accounting";
 import { DirectorView } from "./views/director";
@@ -45,11 +46,11 @@ const VIEWS: Record<Role, () => React.JSX.Element> = {
 
 export function MadrassaDemo({ initialView }: { initialView: Role }) {
   const w = useWorld();
+  const seen = useRead();
   const [view, setView] = useState<Role>(initialView);
   const [toast, setToast] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [step, setStep] = useState(0);
-  const timer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 20000);
@@ -61,12 +62,24 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
     act.markRead(view);
   }, [view, w.notes]);
 
+  // something just arrived for the role on screen (often from another device): say it out loud
+  const incoming = w.notes.find((n) => n.to === view && !n.read && !seen.has(n.id) && typeof n.at === "number");
+  const [shown, setShown] = useState<number | null>(null);
+  if (incoming && incoming.id !== shown) {
+    setShown(incoming.id);
+    setToast(`جديد: ${incoming.text}`);
+  }
+
   const flash = useCallback((t: string) => {
     setToast(t);
     setNow(Date.now());
-    window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => setToast(null), 3400);
   }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+    const id = window.setTimeout(() => setToast(null), 3600);
+    return () => window.clearTimeout(id);
+  }, [toast]);
 
   function go(r: Role) {
     setView(r);
@@ -90,7 +103,7 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
                 <p className="hidden px-3 text-[12px] font-bold text-[#13294B]/55 lg:block">{g.label}</p>
                 {g.roles.map((key) => {
                   const r = ROLES.find((x) => x.key === key)!;
-                  const n = view === key ? 0 : unread(w, key);
+                  const n = view === key ? 0 : unreadCount(w, key, seen);
                   const active = view === key;
                   return (
                     <button
@@ -120,7 +133,7 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
             ))}
           </div>
           <div className="mt-6 hidden space-y-2 lg:block">
-            <p className="px-3 text-[12px] leading-relaxed text-[#13294B]/70">افتح دورين في نافذتين جنبًا إلى جنب: ما يفعله أحدهما يظهر عند الآخر فورًا.</p>
+            <p className="px-3 text-[12px] leading-relaxed text-[#13294B]/70">افتح دورين في نافذتين جنبًا إلى جنب، أو ابدأ «جلسة» واربط هاتفًا آخر: ما يفعله طرف يظهر عند الآخر.</p>
             <button type="button" onClick={() => { act.reset(); setStep(0); flash("أُعيدت البيانات التجريبية"); }} className={cn("mx-3 text-[13px] font-bold text-[#1F3C88] underline-offset-4 hover:underline", focus)}>
               أعد البيانات من البداية
             </button>
@@ -128,6 +141,8 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
         </nav>
 
         <div className="min-w-0 pt-4 lg:pt-0">
+          <SessionBar view={view} />
+
           {/* guided tour */}
           <div className="mb-4 flex items-center gap-3 rounded-2xl bg-[#13294B] p-3 text-white sm:p-3.5">
             <span className="num flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F5A524] font-black text-[#13294B]">{step + 1}</span>
