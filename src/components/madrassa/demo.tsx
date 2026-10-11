@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { SessionBar } from "./session";
-import { ROLES, act, unreadCount, useRead, useWorld, type Role } from "./store";
+import { ROLES, act, unreadCount, useRead, useSync, useWorld, type Role } from "./store";
 import { DemoCtx, focus } from "./ui";
 import { AccountingView } from "./views/accounting";
 import { DirectorView } from "./views/director";
@@ -47,6 +47,8 @@ const VIEWS: Record<Role, () => React.JSX.Element> = {
 export function MadrassaDemo({ initialView }: { initialView: Role }) {
   const w = useWorld();
   const seen = useRead();
+  const sync = useSync();
+  const guest = !!sync.room && !sync.host; // a second phone: no presenter tour
   const [view, setView] = useState<Role>(initialView);
   const [toast, setToast] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
@@ -56,6 +58,11 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
     const id = window.setInterval(() => setNow(Date.now()), 20000);
     return () => window.clearInterval(id);
   }, []);
+
+  // keep the active role visible in the phone rail
+  useEffect(() => {
+    document.querySelector('nav[aria-label="الأدوار"] [aria-current=page]')?.scrollIntoView({ inline: "center", block: "nearest" });
+  }, [view]);
 
   // what you're looking at is read; badges stay on the other roles
   useEffect(() => {
@@ -143,8 +150,9 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
         <div className="min-w-0 pt-4 lg:pt-0">
           <SessionBar view={view} />
 
-          {/* guided tour */}
-          <div className="mb-4 flex items-center gap-3 rounded-2xl bg-[#13294B] p-3 text-white sm:p-3.5">
+          {/* guided tour (presenter only) */}
+          {!guest && (
+            <div className="mb-4 flex items-center gap-3 rounded-2xl bg-[#13294B] p-3 text-white sm:p-3.5">
             <span className="num flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F5A524] font-black text-[#13294B]">{step + 1}</span>
             <p className="min-w-0 flex-1 text-sm font-semibold leading-snug">
               <span className="text-white/55">جولة {step + 1}/{TOUR.length} — </span>
@@ -157,7 +165,8 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
                 {step === TOUR.length - 1 ? "من جديد" : "التالي"}
               </button>
             )}
-          </div>
+            </div>
+          )}
 
           <View />
 

@@ -20,9 +20,10 @@ export * from "./world";
 const KEY = "madrassa-demo";
 const READ_KEY = "madrassa-read";
 const ROOM_KEY = "madrassa-room";
+const HOST_KEY = "madrassa-host";
 const POLL_MS = 1500;
 
-export type Sync = { room: string | null; status: "local" | "connecting" | "live" | "offline" | "missing" };
+export type Sync = { room: string | null; status: "local" | "connecting" | "live" | "offline" | "missing"; host?: boolean };
 
 const SEED = seed();
 let world: World = SEED;
@@ -119,8 +120,8 @@ async function pull() {
   try {
     const r = await fetch(`/api/madrassa/room/${room}?v=${version}`, { cache: "no-store" });
     if (room !== sync.room) return;
-    if (r.status === 404) return setSync({ room, status: "missing" });
-    if (!r.ok) return setSync({ room, status: "offline" });
+    if (r.status === 404) return setSync({ ...sync, room, status: "missing" });
+    if (!r.ok) return setSync({ ...sync, room, status: "offline" });
     let changed = false;
     if (r.status === 200 && inflight === 0) {
       const d = (await r.json()) as { v: number; world: World };
@@ -130,10 +131,10 @@ async function pull() {
         changed = true;
       }
     }
-    if (sync.status !== "live") setSync({ room, status: "live" });
+    if (sync.status !== "live") setSync({ ...sync, room, status: "live" });
     else if (changed) emit();
   } catch {
-    if (room === sync.room) setSync({ room, status: "offline" });
+    if (room === sync.room) setSync({ ...sync, room, status: "offline" });
   }
 }
 
@@ -165,7 +166,11 @@ export async function joinRoom(code: string) {
     url.searchParams.set("room", code);
     window.history.replaceState(null, "", url);
   }
-  setSync({ room: code, status: "connecting" });
+  let host = false;
+  try {
+    host = window.localStorage.getItem(HOST_KEY) === code;
+  } catch {}
+  setSync({ room: code, status: "connecting", host });
   await pull();
   startPolling();
 }
@@ -175,6 +180,9 @@ export async function createRoom(): Promise<string | null> {
     const r = await fetch("/api/madrassa/room", { method: "POST" });
     if (!r.ok) return null;
     const { code } = (await r.json()) as { code: string };
+    try {
+      window.localStorage.setItem(HOST_KEY, code);
+    } catch {}
     await joinRoom(code);
     return code;
   } catch {
@@ -212,10 +220,10 @@ function send(name: string, args: unknown[]) {
           world = d.world;
         }
       } else if (!r.ok && room === sync.room) {
-        setSync({ room, status: r.status === 404 ? "missing" : "offline" });
+        setSync({ ...sync, room, status: r.status === 404 ? "missing" : "offline" });
       }
     } catch {
-      if (room === sync.room) setSync({ room, status: "offline" });
+      if (room === sync.room) setSync({ ...sync, room, status: "offline" });
     } finally {
       inflight--;
       emit();

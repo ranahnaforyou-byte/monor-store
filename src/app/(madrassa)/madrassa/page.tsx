@@ -116,7 +116,7 @@ export default function MadrassaHome() {
       {/* Roles with their own links */}
       <section id="roles" className="scroll-mt-20 mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:px-8">
         <h2 className="font-display text-3xl font-black sm:text-4xl">ثمانية أدوار، لكل دور رابطه</h2>
-        <p className="mt-2 max-w-[60ch] text-[#13294B]/65">البطاقات البيضاء لفريق المدرسة، والزرقاء للعائلة والعموم. افتح أي دور مباشرة، أو دورين في نافذتين وشاهد ما يفعله أحدهما يصل للآخر.</p>
+        <p className="mt-2 max-w-[60ch] text-[#13294B]/65">البطاقات البيضاء لفريق المدرسة، والزرقاء للعائلة والعموم. افتح أي دور مباشرة، أو افتح دورين على هاتفين (أو نافذتين) وشاهد ما يفعله أحدهما يصل للآخر.</p>
         <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {ROLES.map((r, i) => (
             <li key={r.key}>
@@ -153,6 +153,34 @@ export default function MadrassaHome() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Two phones */}
+      <section className="mx-auto max-w-[1200px] px-4 pt-14 sm:px-6 lg:px-8">
+        <div className="grid gap-6 rounded-[28px] bg-white p-6 ring-1 ring-[#1F3C88]/10 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-center">
+          <div>
+            <h2 className="font-display text-3xl font-black sm:text-4xl">جرّبوها على هاتفين</h2>
+            <p className="mt-2 max-w-[48ch] text-[#13294B]/70">أنتم الأستاذ على هاتف، وولي التلميذ على هاتف آخر. ما تسجّلونه هنا يظهر هناك بعد ثانية.</p>
+            <Link href="/madrassa/demo?view=teacher" className="mt-5 inline-flex h-12 items-center rounded-2xl bg-[#1F3C88] px-6 font-bold text-white hover:bg-[#162C66] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5A524] focus-visible:ring-offset-2">
+              افتح العرض وابدأ جلسة
+            </Link>
+          </div>
+          <ol className="space-y-3">
+            {[
+              ["ابدأ جلسة", "في صفحة العرض: «عرض على جهازين» ثم «ابدأ جلسة جديدة». يظهر رمز من 4 أرقام."],
+              ["امسح الرمز بالهاتف الثاني", "اختر الدور الذي يفتحه (الولي مثلًا)، وامسح رمز QR بالكاميرا."],
+              ["تصرّف من هاتف، وشاهد الآخر", "غياب، تبرير، وصل دفع أو طلب تسجيل: يصل بشارة حمراء وتنبيه."],
+            ].map(([t, d], i) => (
+              <li key={t} className="flex gap-3 rounded-2xl bg-[#F5F8FF] p-4">
+                <span className="num flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F5A524] font-black text-[#13294B]">{i + 1}</span>
+                <span>
+                  <b className="block">{t}</b>
+                  <span className="text-sm text-[#13294B]/70">{d}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
