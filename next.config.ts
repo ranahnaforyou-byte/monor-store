@@ -40,7 +40,7 @@ const nextConfig: NextConfig = {
     deviceSizes: [360, 390, 430, 640, 750, 828, 1080, 1200, 1600],
     imageSizes: [64, 96, 128, 256, 384],
     remotePatterns,
-    localPatterns: [{ pathname: "/uploads/**" }],
+    localPatterns: [{ pathname: "/uploads/**" }, { pathname: "/madrassa/**" }],
   },
   async headers() {
     return [

@@ -43,9 +43,9 @@ export function MHeader({ active }: { active?: "home" | "demo" }) {
         </Link>
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
           {[
-            ["/madrassa#roles", "لكل طرف لوحته"],
+            ["/madrassa#why", "للمؤسسة"],
+            ["/madrassa#roles", "الأدوار"],
             ["/madrassa#links", "كيف ترتبط"],
-            ["/madrassa#why", "لماذا MA DRASSA"],
           ].map(([href, label]) => (
             <Link key={href} href={href} className="rounded-full px-4 py-2 text-[15px] font-semibold text-[#1F3C88]/75 hover:text-[#1F3C88]">
               {label}
@@ -53,7 +53,7 @@ export function MHeader({ active }: { active?: "home" | "demo" }) {
           ))}
         </nav>
         <Link
-          href="/madrassa/demo"
+          href="/madrassa/demo?view=director"
           className={cn(
             "ms-auto inline-flex h-10 items-center rounded-full px-5 text-sm font-bold md:ms-0",
             active === "demo" ? "bg-[#F5A524] text-[#13294B]" : "bg-[#1F3C88] text-white hover:bg-[#162C66]",
