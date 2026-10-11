@@ -61,12 +61,13 @@ export function TeacherView() {
                         disabled={w.attendanceSent}
                         onClick={() => setAbsent((a) => ({ ...a, [n]: isAbsent }))}
                         className={cn(
-                          "h-9 rounded-xl px-3 text-[13px] font-bold disabled:cursor-default",
+                          "inline-flex h-9 items-center gap-1 rounded-xl px-3 text-[13px] font-bold disabled:cursor-default",
                           focus,
-                          on ? (isAbsent ? "border border-[#D63C37]/50 bg-white text-[#B42F2A]" : "border border-[#0C8A64]/40 bg-[#E7F6EF] text-[#0A7554]") : "bg-[#F1F4FA] text-[#13294B]/50",
+                          on ? (isAbsent ? "border border-[#D63C37]/50 bg-white text-[#B42F2A]" : "border border-[#0C8A64]/40 bg-[#E7F6EF] text-[#0A7554]") : "bg-[#F1F4FA] text-[#13294B]/70",
                         )}
                       >
-                        {isAbsent ? (on ? "غائب ✕" : "غائب") : on ? "حاضر ✓" : "حاضر"}
+                        {on && <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden><path d={isAbsent ? "M6 6l12 12M18 6 6 18" : "M20 6 9 17l-5-5"} /></svg>}
+                        {isAbsent ? "غائب" : "حاضر"}
                       </button>
                     );
                   })}
@@ -74,7 +75,7 @@ export function TeacherView() {
               </li>
             ))}
           </ul>
-          {!w.attendanceSent && <p className="mt-3 text-[13px] text-[#13294B]/60">اجعل «آدم بوعلام» غائبًا ثم أرسل: يُنبَّه وليّه والمستشار في نفس اللحظة.</p>}
+          {!w.attendanceSent && <p className="mt-3 text-[13px] text-[#13294B]/70">اجعل «آدم بوعلام» غائبًا ثم أرسل: يُنبَّه وليّه والمستشار في نفس اللحظة.</p>}
           <Btn
             className="mt-3 w-full"
             disabled={w.attendanceSent}
@@ -125,11 +126,11 @@ export function TeacherView() {
                 <Btn type="submit" tone="amber" className="flex-1">انشر الواجب</Btn>
               </div>
             </form>
-            <p className="mt-2 text-[12px] text-[#13294B]/55">اتجاه واحد: من الأستاذة إلى التلاميذ وأوليائهم، بلا تعليقات بين الأولياء.</p>
+            <p className="mt-2 text-[12px] text-[#13294B]/70">اتجاه واحد: من الأستاذة إلى التلاميذ وأوليائهم، بلا تعليقات بين الأولياء.</p>
           </Panel>
           <Panel title="الواجبات المنشورة">
             <ul className="space-y-2 text-sm">
-              {w.homework.filter((h) => h.subject === "الرياضيات").map((h) => <li key={h.id} className="rounded-xl bg-[#F5F8FF] p-3">{h.text}<span className="block text-[12px] text-[#13294B]/55">قبل {h.due}</span></li>)}
+              {w.homework.filter((h) => h.subject === "الرياضيات").map((h) => <li key={h.id} className="rounded-xl bg-[#F5F8FF] p-3">{h.text}<span className="block text-[12px] text-[#13294B]/70">قبل {h.due}</span></li>)}
             </ul>
           </Panel>
         </div>
@@ -141,7 +142,7 @@ export function TeacherView() {
             {t.msgs.map((m, i) => (
               <li key={i} className={cn("max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm", m.by === "teacher" ? "ms-auto bg-[#1F3C88] text-white" : "bg-[#F5F8FF]")}>
                 {m.text}
-                <span className={cn("mt-1 block text-[11px]", m.by === "teacher" ? "text-white/60" : "text-[#13294B]/45")}>{ago(m.at, now)}</span>
+                <span className={cn("mt-1 block text-[11px]", m.by === "teacher" ? "text-white/60" : "text-[#13294B]/55")}>{ago(m.at, now)}</span>
               </li>
             ))}
           </ul>

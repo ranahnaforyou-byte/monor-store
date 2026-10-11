@@ -6,11 +6,11 @@ import { FILES, REQ_STAGES, SCHOOL, act, useWorld } from "../store";
 import { Btn, Panel, Pill, RoleHead, Tabs, card, input, useDemo } from "../ui";
 
 const COLS = [
-  { bg: "bg-[#EEF2FC]", dot: "bg-white text-[#1F3C88]", mark: "+", hint: "لم يُعالج بعد" },
-  { bg: "bg-[#FFF7E8]", dot: "bg-white text-[#8A5A0B]", mark: "☎", hint: "تم الاتصال بالولي" },
-  { bg: "bg-[#EEF2FC]", dot: "bg-white text-[#1F3C88]", mark: "✎", hint: "موعد الاختبار محدد" },
-  { bg: "bg-[#EEF9F4]", dot: "bg-white text-[#0A7554]", mark: "✓", hint: "وافق المدير — الملف قيد الإكمال" },
-  { bg: "bg-[#E3F5EC]", dot: "bg-[#0C8A64] text-white", mark: "★", hint: "مسجّل ومستحقاته عند المحاسب" },
+  { bg: "bg-[#EEF2FC]", dot: "bg-white text-[#1F3C88]", mark: "M12 5v14M5 12h14", hint: "لم يُعالج بعد" },
+  { bg: "bg-[#FFF7E8]", dot: "bg-white text-[#8A5A0B]", mark: "M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2", hint: "تم الاتصال بالولي" },
+  { bg: "bg-[#EEF2FC]", dot: "bg-white text-[#1F3C88]", mark: "M5 20V10M12 20V4M19 20v-7", hint: "موعد الاختبار محدد" },
+  { bg: "bg-[#EEF9F4]", dot: "bg-white text-[#0A7554]", mark: "M20 6 9 17l-5-5", hint: "وافق المدير — الملف قيد الإكمال" },
+  { bg: "bg-[#E3F5EC]", dot: "bg-[#0A7554] text-white", mark: "M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5", hint: "مسجّل ومستحقاته عند المحاسب" },
 ];
 
 export function ReceptionView() {
@@ -34,7 +34,7 @@ export function ReceptionView() {
 
       {tab === "pipeline" && (
         <>
-          <p className="text-[13px] text-[#13294B]/60">حرّك الطلب مرحلة بمرحلة. القبول يحتاج موافقة المدير، والتسجيل يضيف المستحقات عند المحاسبة تلقائيًا.</p>
+          <p className="text-[13px] text-[#13294B]/70">حرّك الطلب مرحلة بمرحلة. القبول يحتاج موافقة المدير، والتسجيل يضيف المستحقات عند المحاسبة تلقائيًا.</p>
           <div className="no-scrollbar -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 lg:mx-0 lg:grid lg:grid-cols-5 lg:overflow-visible lg:px-0">
             {REQ_STAGES.map((st, si) => {
               const col = reqs.filter((r) => r.stage === si);
@@ -43,12 +43,14 @@ export function ReceptionView() {
                   <div className="px-3 pb-2 pt-3">
                     <h3 className="flex items-center justify-between text-sm font-black">
                       <span className="flex items-center gap-1.5">
-                        <span aria-hidden className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[12px]", COLS[si].dot)}>{COLS[si].mark}</span>
+                        <span aria-hidden className={cn("flex h-6 w-6 items-center justify-center rounded-full", COLS[si].dot)}>
+                          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d={COLS[si].mark} /></svg>
+                        </span>
                         {st}
                       </span>
                       <span className="num rounded-full bg-white px-2 text-xs">{col.length}</span>
                     </h3>
-                    <p className="mt-0.5 text-[11px] text-[#13294B]/55">{COLS[si].hint}</p>
+                    <p className="mt-0.5 text-[11px] text-[#13294B]/70">{COLS[si].hint}</p>
                   </div>
                   <ul className="space-y-2 p-2 pt-0">
                     {col.map((r) => {
@@ -56,7 +58,7 @@ export function ReceptionView() {
                       return (
                         <li key={r.id} className={cn("rounded-xl bg-white p-3 ring-1 ring-[#1F3C88]/10", si === 0 && "anim-pop ring-[#F5A524]")}>
                           <p className="text-sm font-bold">{r.child}</p>
-                          <p className="text-[12px] text-[#13294B]/60">{r.level} — وليّ: {r.parent}</p>
+                          <p className="text-[12px] text-[#13294B]/70">{r.level} — وليّ: {r.parent}</p>
                           {r.slot && si === 2 && <p className="mt-1 text-[12px] font-bold text-[#1F3C88]">اختبار: {r.slot}</p>}
                           <details className="mt-2">
                             <summary className="cursor-pointer text-[12px] font-bold text-[#1F3C88]">الملف {done}/{FILES.length}</summary>
@@ -106,7 +108,7 @@ export function ReceptionView() {
               {w.appts.map((a) => (
                 <li key={a.id} className="flex items-center gap-3 rounded-xl bg-[#F5F8FF] p-3 text-sm">
                   <span className="num w-28 shrink-0 font-bold text-[#1F3C88]">{a.when}</span>
-                  <span className="flex-1"><b>{a.who}</b><span className="block text-[12px] text-[#13294B]/60">{a.why}</span></span>
+                  <span className="flex-1"><b>{a.who}</b><span className="block text-[12px] text-[#13294B]/70">{a.why}</span></span>
                 </li>
               ))}
             </ul>

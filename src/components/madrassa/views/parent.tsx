@@ -48,7 +48,7 @@ export function ParentView() {
           {KIDS.map((c) => (
             <button key={c.id} type="button" onClick={() => setKid(c.id)} className={cn("relative rounded-2xl border p-3 text-start", focus, kid === c.id ? "border-[#1F3C88] bg-[#F5F8FF]" : "border-[#1F3C88]/10")}>
               <p className="font-black">{c.name}</p>
-              <p className="line-clamp-1 text-[11px] text-[#13294B]/60">{c.school}</p>
+              <p className="line-clamp-1 text-[11px] text-[#13294B]/70">{c.school}</p>
               {c.live && openAbs + dueFees > 0 && <span className="num absolute -top-1.5 -start-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#D63C37] px-1 text-[11px] font-bold text-white">{openAbs + dueFees}</span>}
             </button>
           ))}
@@ -140,7 +140,7 @@ export function ParentView() {
                       return (
                         <tr key={s}>
                           <td className="py-2.5">{s}</td>
-                          <td className={cn("num py-2.5 text-end font-bold", !v && "text-[#13294B]/40", s === "الرياضيات" && math && "text-[#0A7554]")}>{v ? `${v} / 20` : "لم تُنشر"}</td>
+                          <td className={cn("num py-2.5 text-end font-bold", !v && "text-[#13294B]/55", s === "الرياضيات" && math && "text-[#0A7554]")}>{v ? `${v} / 20` : "لم تُنشر"}</td>
                         </tr>
                       );
                     })}
@@ -151,7 +151,7 @@ export function ParentView() {
                 <ul className="space-y-2">
                   {w.homework.map((h) => (
                     <li key={h.id} className="rounded-xl bg-[#F5F8FF] p-3 text-sm">
-                      <div className="flex items-center justify-between gap-2"><b>{h.subject}</b><span className="text-[12px] text-[#13294B]/60">قبل {h.due}</span></div>
+                      <div className="flex items-center justify-between gap-2"><b>{h.subject}</b><span className="text-[12px] text-[#13294B]/70">قبل {h.due}</span></div>
                       <p className="mt-1">{h.text}</p>
                       {h.done && <Pill tone="green" className="mt-2">أنجزه آدم</Pill>}
                     </li>
@@ -180,7 +180,7 @@ export function ParentView() {
                         const at = f.status === "confirmed" ? 2 : f.status === "receipt" ? 1 : 0;
                         return (
                           <li key={s} className="flex items-center gap-1.5">
-                            <span className={cn("rounded-full px-2.5 py-1", i < at ? "bg-[#E7F6EF] text-[#0A7554]" : i === at ? (at === 2 ? "bg-[#0C8A64] text-white" : "bg-[#FEEFD0] text-[#8A5A0B]") : "bg-white text-[#13294B]/40")}>{s}</span>
+                            <span className={cn("rounded-full px-2.5 py-1", i < at ? "bg-[#E7F6EF] text-[#0A7554]" : i === at ? (at === 2 ? "bg-[#0A7554] text-white" : "bg-[#FEEFD0] text-[#8A5A0B]") : "bg-white text-[#13294B]/55")}>{s}</span>
                             {i < 2 && <span aria-hidden className="text-[#13294B]/30">←</span>}
                           </li>
                         );
@@ -202,7 +202,7 @@ export function ParentView() {
                             <p className="flex items-center justify-center gap-2 text-sm font-bold">
                               <span className="rounded-md bg-[#FDE3E1] px-1.5 py-0.5 text-[11px] text-[#B42F2A]">{file.split(".").pop()?.toUpperCase()}</span>
                               <span className="truncate">{file}</span>
-                              <button type="button" onClick={() => setFile(null)} aria-label="أزل الملف" className={cn("rounded-full px-2 text-[#13294B]/50", focus)}>✕</button>
+                              <button type="button" onClick={() => setFile(null)} aria-label="أزل الملف" className={cn("rounded-full px-2 text-[#13294B]/70", focus)}>✕</button>
                             </p>
                           ) : (
                             <>
@@ -214,7 +214,7 @@ export function ParentView() {
                                 </label>
                                 <Btn tone="ghost" className="h-10" onClick={() => setFile("وصل_أكتوبر.jpg")}>صورة تجريبية</Btn>
                               </div>
-                              <p className="mt-2 text-[11px] text-[#13294B]/50">في العرض التجريبي لا يُرفع الملف لأي خادم.</p>
+                              <p className="mt-2 text-[11px] text-[#13294B]/70">في العرض التجريبي لا يُرفع الملف لأي خادم.</p>
                             </>
                           )}
                         </div>
@@ -224,7 +224,7 @@ export function ParentView() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-3 text-xs text-[#13294B]/60">الدفع يتم خارج المنصة (بريدي موب، CCP أو نقدًا)؛ المنصة تنقل الوصل للمحاسبة وتحفظ التأكيد.</p>
+              <p className="mt-3 text-xs text-[#13294B]/70">الدفع يتم خارج المنصة (بريدي موب، CCP أو نقدًا)؛ المنصة تنقل الوصل للمحاسبة وتحفظ التأكيد.</p>
             </Panel>
           )}
 
@@ -238,12 +238,12 @@ export function ParentView() {
                 ))}
               </ul>
               <div className="flex min-h-[340px] flex-col p-3 sm:p-4">
-                <p className="mb-2 text-[12px] text-[#13294B]/55">رسائل خاصة بينك وبين المدرسة فقط — تطّلع عليها الإدارة. لا يرى الأولياء الآخرون شيئًا.</p>
+                <p className="mb-2 text-[12px] text-[#13294B]/70">رسائل خاصة بينك وبين المدرسة فقط — تطّلع عليها الإدارة. لا يرى الأولياء الآخرون شيئًا.</p>
                 <ul className="flex-1 space-y-2">
                   {th.msgs.map((m, i) => (
                     <li key={i} className={cn("max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm", m.by === "parent" ? "ms-auto bg-[#1F3C88] text-white" : "bg-[#F5F8FF]")}>
                       {m.text}
-                      <span className={cn("mt-1 block text-[11px]", m.by === "parent" ? "text-white/60" : "text-[#13294B]/45")}>{ago(m.at, now)}</span>
+                      <span className={cn("mt-1 block text-[11px]", m.by === "parent" ? "text-white/60" : "text-[#13294B]/55")}>{ago(m.at, now)}</span>
                     </li>
                   ))}
                 </ul>
@@ -266,7 +266,7 @@ export function ParentView() {
                       <p className="text-sm font-bold">{r.child} — {schoolName(r.school)}</p>
                       <ol className="mt-2 grid grid-cols-5 gap-1 text-center text-[10px] font-bold sm:text-[11px]">
                         {REQ_STAGES.map((st, i) => (
-                          <li key={st} className={cn("rounded-lg px-0.5 py-1.5", i <= r.stage ? "bg-[#0C8A64] text-white" : "bg-[#F5F8FF] text-[#13294B]/45")}>{st}</li>
+                          <li key={st} className={cn("rounded-lg px-0.5 py-1.5", i <= r.stage ? "bg-[#0A7554] text-white" : "bg-[#F5F8FF] text-[#13294B]/55")}>{st}</li>
                         ))}
                       </ol>
                       {r.waiting && <p className="mt-1.5 text-[12px] text-[#8A5A0B]">بانتظار موافقة المدير</p>}
@@ -279,7 +279,7 @@ export function ParentView() {
                 <form onSubmit={(e) => { e.preventDefault(); if (!review.trim()) return; act.review(stars, review.trim()); setReview(""); flash("نُشر تقييمك في الدليل — المدرسة تردّ ولا تحذف"); }}>
                   <div className="flex gap-1" role="radiogroup" aria-label="عدد النجوم">
                     {[1, 2, 3, 4, 5].map((n) => (
-                      <button key={n} type="button" role="radio" aria-checked={stars === n} aria-label={`${n} نجوم`} onClick={() => setStars(n)} className={cn("h-10 w-10 rounded-xl text-xl", focus, n <= stars ? "text-[#E89A14]" : "text-[#13294B]/20")}>★</button>
+                      <button key={n} type="button" role="radio" aria-checked={stars === n} aria-label={`${n} نجوم`} onClick={() => setStars(n)} className={cn("flex h-10 w-10 items-center justify-center rounded-xl", focus, n <= stars ? "text-[#E89A14]" : "text-[#13294B]/20")}><svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden><path d="m12 2 3 6.6 7 .7-5.3 4.7 1.6 7-6.3-3.8L5.7 21l1.6-7L2 9.3l7-.7z" /></svg></button>
                     ))}
                   </div>
                   <textarea value={review} onChange={(e) => setReview(e.target.value)} rows={3} placeholder="رأيك في المؤسسة (لا تذكر أسماء الأساتذة)" aria-label="التقييم" className={cn(input, "mt-2 h-auto w-full py-2")} />

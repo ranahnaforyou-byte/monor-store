@@ -28,7 +28,7 @@ export function Btn({
         size === "sm" ? "h-9 px-3 text-[13px]" : "h-11 px-4 text-sm",
         tone === "blue" && "bg-[#1F3C88] text-white hover:bg-[#162C66]",
         tone === "amber" && "bg-[#F5A524] text-[#13294B] hover:bg-[#E89A14]",
-        tone === "green" && "bg-[#0C8A64] text-white hover:bg-[#0A7554]",
+        tone === "green" && "bg-[#0A7554] text-white hover:bg-[#08624A]",
         tone === "red" && "border border-[#D63C37]/30 bg-white text-[#C0322D] hover:bg-[#FDECEC]",
         tone === "ghost" && "border border-[#1F3C88]/15 bg-white text-[#1F3C88] hover:bg-[#F5F8FF]",
         className,
@@ -48,7 +48,7 @@ export function Pill({ children, tone = "blue", className }: { children: ReactNo
         tone === "amber" && "bg-[#FEF3DC] text-[#8A5A0B]",
         tone === "green" && "bg-[#E7F6EF] text-[#0A7554]",
         tone === "red" && "bg-[#FDECEC] text-[#B42F2A]",
-        tone === "gray" && "bg-[#EEF1F7] text-[#13294B]/60",
+        tone === "gray" && "bg-[#EEF1F7] text-[#13294B]/70",
         className,
       )}
     >
@@ -89,8 +89,17 @@ export function Stat({ label, value, sub, tone = "blue", icon }: { label: string
     <div className={cn("flex items-start gap-3 rounded-[20px] border p-4", t.box)}>
       <div className="min-w-0 flex-1">
         <p className="text-[13px] font-semibold text-[#13294B]/65">{label}</p>
-        <p className={cn("num mt-1 font-display text-[22px] font-black leading-tight sm:text-[28px]", t.ink)}>{value}</p>
-        {sub && <p className="mt-0.5 text-xs text-[#13294B]/55">{sub}</p>}
+        <p className={cn("num mt-1 whitespace-nowrap font-display text-[22px] font-black leading-tight sm:text-[26px]", t.ink)}>
+          {typeof value === "string" && value.endsWith(" دج") ? (
+            <>
+              {value.slice(0, -3)}
+              <span className="ms-1 text-[14px] font-bold">دج</span>
+            </>
+          ) : (
+            value
+          )}
+        </p>
+        {sub && <p className="mt-0.5 text-xs text-[#13294B]/70">{sub}</p>}
       </div>
       {icon && (
         <span className={cn("hidden h-11 w-11 shrink-0 items-center justify-center rounded-full sm:flex", t.dot)}>
@@ -126,7 +135,7 @@ export function NoteCard({ tone, text, when, fresh }: { tone: Tone; text: string
         <p className={cn("text-[13px] font-black", m.ink)}>{m.title}</p>
         <p className="text-sm font-semibold leading-snug">{text}</p>
       </div>
-      <span className="shrink-0 text-[11px] text-[#13294B]/50">{when}</span>
+      <span className="shrink-0 text-[11px] text-[#13294B]/70">{when}</span>
     </li>
   );
 }
@@ -137,7 +146,7 @@ export function Avatar({ name, tone = "bg-[#E9EEFB] text-[#1F3C88]", className }
 }
 
 export function Empty({ children }: { children: ReactNode }) {
-  return <p className="rounded-2xl border border-dashed border-[#1F3C88]/15 p-4 text-center text-sm text-[#13294B]/60">{children}</p>;
+  return <p className="rounded-2xl border border-dashed border-[#1F3C88]/15 p-4 text-center text-sm text-[#13294B]/70">{children}</p>;
 }
 
 export function Tabs<T extends string>({ value, onChange, items }: { value: T; onChange: (v: T) => void; items: [T, string, number?][] }) {
@@ -201,7 +210,7 @@ export function RoleHead({ name, line, tone }: { name: string; line: string; ton
       <Avatar name={name} tone={tone} className="h-11 w-11 text-sm" />
       <div className="min-w-0">
         <p className="font-display text-xl font-black leading-tight">{name}</p>
-        <p className="truncate text-[13px] text-[#13294B]/60">{line}</p>
+        <p className="truncate text-[13px] text-[#13294B]/70">{line}</p>
       </div>
     </div>
   );

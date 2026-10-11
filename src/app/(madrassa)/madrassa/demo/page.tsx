@@ -14,11 +14,11 @@ export default async function MadrassaDemoPage({ searchParams }: { searchParams:
   const { view } = await searchParams;
   const initial: Role = ROLE_KEYS.includes(view as Role) ? (view as Role) : "director";
   return (
-    <div dir="rtl" lang="ar" className="min-h-dvh bg-[#F5F8FF] text-[#13294B]">
+    <div dir="rtl" lang="ar" className="md-root min-h-dvh bg-[#F5F8FF] text-[#13294B]">
       <MHeader active="demo" />
       <main className="mx-auto max-w-[1280px] px-4 pb-16 pt-2 sm:px-6 lg:px-8 lg:pt-8">
         <MadrassaDemo key={initial} initialView={initial} />
-        <p className="mt-8 text-center text-xs text-[#13294B]/50">بيانات تجريبية — أسماء ومؤسسات وهمية، تُحفظ في متصفحك فقط</p>
+        <p className="mt-8 text-center text-xs text-[#13294B]/70">بيانات تجريبية — أسماء ومؤسسات وهمية، تُحفظ في متصفحك فقط</p>
       </main>
       <MFooter />
     </div>

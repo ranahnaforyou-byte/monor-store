@@ -199,3 +199,5 @@
 @keyframes md-relay { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
 .relay-step { animation: md-relay 420ms ease-out both; }
 @media (prefers-reduced-motion: reduce) { .relay-step { animation: none; } }
+.md-root ::selection { background: #F5A524; color: #13294B; }
+.md-root { caret-color: #1F3C88; accent-color: #1F3C88; }

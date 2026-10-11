@@ -26,7 +26,7 @@ export function AccountingView() {
       <Avatar name={f.pupil} />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-bold">{f.pupil}</p>
-        <p className="num text-[12px] text-[#13294B]/60">{f.month} — {fmt(f.amount)}{f.method ? ` — ${f.method}` : ""}</p>
+        <p className="num text-[12px] text-[#13294B]/70">{f.month} — {fmt(f.amount)}{f.method ? ` — ${f.method}` : ""}</p>
       </div>
       {actions}
     </li>
@@ -48,7 +48,7 @@ export function AccountingView() {
       {tab === "receipts" && (
         <Panel title="وصولات بريدي موب / CCP بانتظار التأكيد">
           {receipts.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-[#1F3C88]/15 p-4 text-center text-sm text-[#13294B]/60">لا وصولات. عندما يرفع وليّ وصله يظهر هنا فورًا.</p>
+            <p className="rounded-2xl border border-dashed border-[#1F3C88]/15 p-4 text-center text-sm text-[#13294B]/70">لا وصولات. عندما يرفع وليّ وصله يظهر هنا فورًا.</p>
           ) : (
             <ul className="space-y-2">
               {receipts.map((f) =>
@@ -78,7 +78,7 @@ export function AccountingView() {
               ),
             )}
           </ul>
-          <p className="mt-3 text-[12px] text-[#13294B]/55">لتجربة الرابط مع الولي: في «كل المستحقات» ذكّر وليّ آدم.</p>
+          <p className="mt-3 text-[12px] text-[#13294B]/70">لتجربة الرابط مع الولي: في «كل المستحقات» ذكّر وليّ آدم.</p>
         </Panel>
       )}
 

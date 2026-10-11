@@ -70,7 +70,7 @@ export function DirectoryView() {
         </div>
 
         <ul className="mt-4 space-y-2.5">
-          {list.length === 0 && <li className="rounded-2xl border border-dashed border-[#1F3C88]/15 p-5 text-center text-sm text-[#13294B]/60">لا نتيجة. جرّب «كل المدن» أو كلمة أقصر.</li>}
+          {list.length === 0 && <li className="rounded-2xl border border-dashed border-[#1F3C88]/15 p-5 text-center text-sm text-[#13294B]/70">لا نتيجة. جرّب «كل المدن» أو كلمة أقصر.</li>}
           {list.map((s) => {
             const isOpen = open === s.id;
             const reviews = w.reviews.filter((r) => r.school === s.id);
@@ -84,13 +84,13 @@ export function DirectoryView() {
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="font-bold leading-snug">{s.name}</p>
-                    <p className="text-[13px] text-[#13294B]/60">{s.kind}، {s.area} — {s.city}</p>
+                    <p className="text-[13px] text-[#13294B]/70">{s.kind}، {s.area} — {s.city}</p>
                     <p className="mt-0.5 text-[13px] text-[#13294B]/75">{s.levels}</p>
                   </div>
                   <div className="shrink-0 text-end">
                     {rating[s.id].n > 0 && <Stars n={rating[s.id].avg} />}
                     <p className="num mt-1 text-sm font-bold">{fmt(s.fee)}</p>
-                    <p className="text-[11px] text-[#13294B]/55">في الشهر</p>
+                    <p className="text-[11px] text-[#13294B]/70">في الشهر</p>
                   </div>
                 </div>
                 <div className="mt-3 flex gap-2">
@@ -98,7 +98,7 @@ export function DirectoryView() {
                     {isOpen ? "إغلاق الصفحة" : "الصفحة والتقييمات"}
                   </Btn>
                   <Btn size="sm" tone="ghost" onClick={() => setCompare((c) => (c.includes(s.id) ? c.filter((x) => x !== s.id) : [...c, s.id].slice(-3)))} className={compare.includes(s.id) ? "border-[#F5A524] bg-[#FEF3DC] text-[#8A5A0B]" : ""}>
-                    {compare.includes(s.id) ? "في المقارنة ✓" : "قارن"}
+                    {compare.includes(s.id) ? "في المقارنة" : "قارن"}
                   </Btn>
                 </div>
 
@@ -111,13 +111,13 @@ export function DirectoryView() {
                       </div>
                     )}
                     <div className="grid grid-cols-2 gap-2 text-sm">
-                      <p className="rounded-xl bg-white p-3 ring-1 ring-[#1F3C88]/10"><span className="block text-[12px] text-[#13294B]/55">الدوام</span><b>{s.hours}</b></p>
-                      <p className="rounded-xl bg-white p-3 ring-1 ring-[#1F3C88]/10"><span className="block text-[12px] text-[#13294B]/55">الشهرية</span><b className="num">{fmt(s.fee)}</b></p>
+                      <p className="rounded-xl bg-white p-3 ring-1 ring-[#1F3C88]/10"><span className="block text-[12px] text-[#13294B]/70">الدوام</span><b>{s.hours}</b></p>
+                      <p className="rounded-xl bg-white p-3 ring-1 ring-[#1F3C88]/10"><span className="block text-[12px] text-[#13294B]/70">الشهرية</span><b className="num">{fmt(s.fee)}</b></p>
                     </div>
                     <p className="text-sm font-bold">تقييمات موثّقة ({reviews.length})</p>
                     {reviews.map((r) => (
                       <div key={r.id} className="rounded-xl bg-white p-3 ring-1 ring-[#1F3C88]/10">
-                        <div className="flex items-center justify-between gap-2 text-xs text-[#13294B]/60">
+                        <div className="flex items-center justify-between gap-2 text-xs text-[#13294B]/70">
                           <span className="inline-flex items-center gap-1.5">
                             <Pill tone="green">وليّ موثّق</Pill>
                             {r.by}
@@ -156,7 +156,7 @@ export function DirectoryView() {
         <section className={cn(card, "p-4 sm:p-5")}>
           <h3 className="font-display text-lg font-black">المقارنة</h3>
           {compare.length === 0 ? (
-            <p className="mt-2 text-sm text-[#13294B]/60">اضغط «قارن» على مؤسستين أو ثلاث لترى الفرق جنبًا إلى جنب.</p>
+            <p className="mt-2 text-sm text-[#13294B]/70">اضغط «قارن» على مؤسستين أو ثلاث لترى الفرق جنبًا إلى جنب.</p>
           ) : (
             <div className="mt-3 overflow-x-auto">
               <table className="w-full min-w-[280px] text-sm">
@@ -177,7 +177,7 @@ export function DirectoryView() {
                     ] as const
                   ).map(([label, get]) => (
                     <tr key={label}>
-                      <td className="py-2 pe-2 text-[#13294B]/60">{label}</td>
+                      <td className="py-2 pe-2 text-[#13294B]/70">{label}</td>
                       {compare.map((id) => <td key={id} className="py-2 pe-2 font-semibold">{get(SCHOOLS.find((s) => s.id === id)!)}</td>)}
                     </tr>
                   ))}

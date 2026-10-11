@@ -87,7 +87,7 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
           <div className="no-scrollbar flex gap-2 overflow-x-auto lg:flex-col lg:gap-4 lg:overflow-visible">
             {GROUPS.map((g) => (
               <div key={g.label} className="flex shrink-0 gap-2 lg:flex-col lg:gap-1">
-                <p className="hidden px-3 text-[12px] font-bold text-[#13294B]/45 lg:block">{g.label}</p>
+                <p className="hidden px-3 text-[12px] font-bold text-[#13294B]/55 lg:block">{g.label}</p>
                 {g.roles.map((key) => {
                   const r = ROLES.find((x) => x.key === key)!;
                   const n = view === key ? 0 : unread(w, key);
@@ -106,7 +106,7 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
                     >
                       <span className="flex flex-col leading-tight">
                         <span className="text-[15px] font-black">{r.label}</span>
-                        <span className={cn("text-[11px]", active ? "text-white/70" : "text-[#13294B]/50")}>{r.who}</span>
+                        <span className={cn("text-[11px]", active ? "text-white/70" : "text-[#13294B]/70")}>{r.who}</span>
                       </span>
                       {n > 0 && (
                         <span className="num anim-pop absolute -top-1.5 -start-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#D63C37] px-1 text-[11px] font-bold text-white lg:static lg:ms-auto" aria-label={`${n} جديد`}>
@@ -120,7 +120,7 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
             ))}
           </div>
           <div className="mt-6 hidden space-y-2 lg:block">
-            <p className="px-3 text-[12px] leading-relaxed text-[#13294B]/55">افتح دورين في نافذتين جنبًا إلى جنب: ما يفعله أحدهما يظهر عند الآخر فورًا.</p>
+            <p className="px-3 text-[12px] leading-relaxed text-[#13294B]/70">افتح دورين في نافذتين جنبًا إلى جنب: ما يفعله أحدهما يظهر عند الآخر فورًا.</p>
             <button type="button" onClick={() => { act.reset(); setStep(0); flash("أُعيدت البيانات التجريبية"); }} className={cn("mx-3 text-[13px] font-bold text-[#1F3C88] underline-offset-4 hover:underline", focus)}>
               أعد البيانات من البداية
             </button>

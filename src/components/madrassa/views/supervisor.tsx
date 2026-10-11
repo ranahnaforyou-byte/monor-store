@@ -76,7 +76,7 @@ export function SupervisorView() {
               <ul className="space-y-2">
                 {w.convocations.map((c) => (
                   <li key={c.id} className="flex items-center gap-3 rounded-xl bg-[#F5F8FF] p-3 text-sm">
-                    <span className="flex-1"><b>{c.pupil}</b> — {c.when}<span className="block text-[12px] text-[#13294B]/60">{c.reason}</span></span>
+                    <span className="flex-1"><b>{c.pupil}</b> — {c.when}<span className="block text-[12px] text-[#13294B]/70">{c.reason}</span></span>
                     <Pill tone={c.status === "confirmed" ? "green" : "amber"}>{c.status === "confirmed" ? "الولي أكّد" : "بانتظار الولي"}</Pill>
                   </li>
                 ))}
@@ -84,7 +84,7 @@ export function SupervisorView() {
             </Panel>
             <Panel title="سجل الانضباط">
               <ul className="space-y-2 text-sm">
-                {w.incidents.map((i) => <li key={i.id} className="rounded-xl bg-[#F5F8FF] p-3"><b>{i.pupil}:</b> {i.text}<span className="block text-[11px] text-[#13294B]/50">{ago(i.at, now)}</span></li>)}
+                {w.incidents.map((i) => <li key={i.id} className="rounded-xl bg-[#F5F8FF] p-3"><b>{i.pupil}:</b> {i.text}<span className="block text-[11px] text-[#13294B]/70">{ago(i.at, now)}</span></li>)}
               </ul>
             </Panel>
           </div>
@@ -97,7 +97,7 @@ export function SupervisorView() {
             <ul className="grid gap-2 sm:grid-cols-2">
               {w.sessions.map((s) => (
                 <li key={s.id} className={cn("rounded-xl p-2.5 text-sm", s.change ? "bg-[#FEF3DC]" : "bg-[#F5F8FF]")}>
-                  <b>{s.day} {s.time}</b> — {s.subject} <span className="text-[12px] text-[#13294B]/55">({s.room})</span>
+                  <b>{s.day} {s.time}</b> — {s.subject} <span className="text-[12px] text-[#13294B]/70">({s.room})</span>
                   {s.change && <span className="block text-[12px] font-bold text-[#8A5A0B]">{s.change}</span>}
                 </li>
               ))}
@@ -119,13 +119,13 @@ export function SupervisorView() {
 
       {tab === "messages" && (
         <Panel title="رسائل الأولياء مع المدرسة" aside={<Pill tone="gray">اطلاع فقط</Pill>}>
-          <p className="mb-3 text-[13px] text-[#13294B]/60">كل الرسائل خاصة بين وليّ والمدرسة. لا توجد مجموعات بين الأولياء، والإدارة تطّلع على كل محادثة.</p>
+          <p className="mb-3 text-[13px] text-[#13294B]/70">كل الرسائل خاصة بين وليّ والمدرسة. لا توجد مجموعات بين الأولياء، والإدارة تطّلع على كل محادثة.</p>
           <ul className="space-y-3">
             {w.threads.map((t) => (
               <li key={t.id} className="rounded-2xl bg-[#F5F8FF] p-3">
                 <p className="text-sm font-bold">وليّ آدم بوعلام ↔ {t.title}</p>
                 <p className="mt-1 line-clamp-2 text-[13px] text-[#13294B]/70">{t.msgs[t.msgs.length - 1]?.text}</p>
-                <p className="mt-1 text-[11px] text-[#13294B]/50">{t.msgs.length} رسائل</p>
+                <p className="mt-1 text-[11px] text-[#13294B]/70">{t.msgs.length} رسائل</p>
               </li>
             ))}
           </ul>

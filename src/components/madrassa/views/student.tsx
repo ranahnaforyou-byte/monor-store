@@ -25,7 +25,7 @@ export function StudentView() {
           {notes.slice(0, 3).map((n) => (
             <li key={n.id} className={cn("flex items-center justify-between gap-3 rounded-2xl p-3 text-sm font-semibold", typeof n.at === "number" && now - n.at < 120000 ? "anim-pop bg-[#FFF8E6] ring-1 ring-[#F5A524]/50" : "bg-white ring-1 ring-[#1F3C88]/10")}>
               {n.text}
-              <span className="shrink-0 text-[11px] text-[#13294B]/50">{ago(n.at, now)}</span>
+              <span className="shrink-0 text-[11px] text-[#13294B]/70">{ago(n.at, now)}</span>
             </li>
           ))}
         </ul>
@@ -46,7 +46,7 @@ export function StudentView() {
                   <b>{s.subject}</b>
                   {s.change && <span className="block text-[12px] font-bold text-[#8A5A0B]">{s.change}</span>}
                 </span>
-                <span className="text-[12px] text-[#13294B]/60">{s.room}</span>
+                <span className="text-[12px] text-[#13294B]/70">{s.room}</span>
               </li>
             ))}
           </ul>
@@ -60,7 +60,7 @@ export function StudentView() {
                   <input type="checkbox" checked={!!h.done} onChange={() => act.toggleHomework(h.id)} className="mt-1 h-4 w-4 accent-[#0C8A64]" />
                   <span className="flex-1">
                     <b>{h.subject}</b> — {h.text}
-                    <span className="block text-[12px] text-[#13294B]/55">قبل {h.due}</span>
+                    <span className="block text-[12px] text-[#13294B]/70">قبل {h.due}</span>
                   </span>
                 </label>
               </li>
@@ -74,7 +74,7 @@ export function StudentView() {
               const v = g ?? math;
               return (
                 <li key={s} className="rounded-xl bg-[#F5F8FF] p-3">
-                  <p className="text-[12px] text-[#13294B]/60">{s}</p>
+                  <p className="text-[12px] text-[#13294B]/70">{s}</p>
                   <p className={cn("num font-display text-lg font-black", !v && "text-[#13294B]/35")}>{v ?? "—"}</p>
                 </li>
               );
