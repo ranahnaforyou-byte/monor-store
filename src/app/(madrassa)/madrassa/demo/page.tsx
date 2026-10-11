@@ -3,7 +3,7 @@ import { MFooter, MHeader } from "@/components/madrassa/brand";
 import { MadrassaDemo } from "@/components/madrassa/demo";
 
 export const metadata: Metadata = {
-  title: { absolute: "جرّب م مدرسة — كل الأدوار" },
+  title: { absolute: "جرّب MA DRASSA — كل الأدوار" },
   description: "بدّل بين الدليل والولي والمؤسسة والأستاذ والتلميذ، وشاهد كيف يصل كل طلب لصاحبه.",
 };
 

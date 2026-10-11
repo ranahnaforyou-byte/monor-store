@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MFooter, MHeader } from "@/components/madrassa/brand";
 
 export const metadata: Metadata = {
-  title: { absolute: "م مدرسة — كل مدارسك في منظومة واحدة" },
+  title: { absolute: "MA DRASSA — كل مدارسك في منظومة واحدة" },
   description:
     "منظومة واحدة تجمع المدارس الخاصة ومراكز اللغات والدعم والتكوين المهني مع الأولياء والأساتذة: تسجيل، مستحقات، غيابات، نقاط وجروبات — في الجزائر العاصمة ووهران.",
 };
@@ -156,7 +156,7 @@ export default function MadrassaHome() {
 
       {/* Why */}
       <section id="why" className="scroll-mt-20 mx-auto max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8">
-        <h2 className="text-center font-display text-3xl font-black sm:text-4xl">لماذا م مدرسة؟</h2>
+        <h2 className="text-center font-display text-3xl font-black sm:text-4xl">لماذا MA DRASSA؟</h2>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           <div className="rounded-[24px] border border-[#D63C37]/20 bg-white p-6">
             <p className="font-display text-xl font-black text-[#D63C37]">اليوم: فيسبوك وواتساب</p>
@@ -168,7 +168,7 @@ export default function MadrassaHome() {
             </ul>
           </div>
           <div className="rounded-[24px] border border-[#0C8A64]/25 bg-white p-6">
-            <p className="font-display text-xl font-black text-[#0C8A64]">مع م مدرسة</p>
+            <p className="font-display text-xl font-black text-[#0C8A64]">مع MA DRASSA</p>
             <ul className="mt-3 space-y-2 text-[15px] text-[#13294B]/75">
               <li>دليل منظّم: بحث، مقارنة، وتقييمات موثّقة من الأولياء فقط</li>
               <li>جروب لكل قسم تشرف عليه المؤسسة</li>
