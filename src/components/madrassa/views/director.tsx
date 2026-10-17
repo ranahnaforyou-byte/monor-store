@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { CLASS, PERMS, SCHOOL, act, ago, fmt, roleLabel, useWorld } from "../store";
+import { CLASS, PERMS, SCHOOL, act, ago, fmt, roleLabel, useWorld, type Job } from "../store";
 import { Btn, Panel, Pill, RoleHead, Stars, Stat, Tabs, NoteCard, card, input, useDemo } from "../ui";
 
 /** Demo baseline for the whole school (fictional); the live demo class adds to it. */
@@ -14,12 +14,16 @@ const CLASSES = [
 export function DirectorView() {
   const w = useWorld();
   const { flash, now } = useDemo();
-  const [tab, setTab] = useState<"overview" | "approvals" | "staff" | "reviews">("overview");
+  const [tab, setTab] = useState<"overview" | "approvals" | "staff" | "hiring" | "reviews">("overview");
+  const [job, setJob] = useState({ title: "أستاذ(ة) رياضيات — المتوسط", kind: "تدريس" as Job["kind"], hours: "دوام كامل", note: "ليسانس رياضيات، خبرة سنة على الأقل" });
   const [ann, setAnn] = useState("العطلة تبدأ الخميس بعد آخر حصة. استئناف الدراسة الأحد 3 نوفمبر.");
   const [reply, setReply] = useState<Record<number, string>>({});
 
   const confirmed = w.fees.filter((f) => f.status === "confirmed").reduce((a, b) => a + b.amount, 0);
   const late = w.fees.filter((f) => f.status === "late");
+  const myJobs = w.jobs.filter((j) => j.school === "najah");
+  const apps = w.applications.filter((a) => myJobs.some((j) => j.id === a.jobId));
+  const newApps = apps.filter((a) => a.status === "new").length;
   const pending = w.approvals.filter((a) => a.status === "pending");
   const today = w.absences.filter((a) => a.date === "اليوم");
   const enrolled = w.reqs.filter((r) => r.stage === 4).length;
@@ -36,7 +40,7 @@ export function DirectorView() {
         <RoleHead name="نادية حمدي" line={`مديرة ${SCHOOL.name} — ${SCHOOL.area}`} tone="bg-[#1F3C88] text-white" />
         <Pill tone="gray">أكتوبر</Pill>
       </div>
-      <Tabs value={tab} onChange={setTab} items={[["overview", "نظرة عامة"], ["approvals", "الموافقات", pending.length], ["staff", "الموظفون والصلاحيات"], ["reviews", "التقييمات"]]} />
+      <Tabs value={tab} onChange={setTab} items={[["overview", "نظرة عامة"], ["approvals", "الموافقات", pending.length], ["staff", "الموظفون والصلاحيات"], ["hiring", "التوظيف", newApps], ["reviews", "التقييمات"]]} />
 
       {tab === "overview" && (
         <>
@@ -135,6 +139,59 @@ export function DirectorView() {
           </div>
           <p className="mt-3 text-[12px] text-[#13294B]/70">الأساتذة موظفون داخل المؤسسة: لا حساب عام لهم، ويرون أقسامهم فقط.</p>
         </Panel>
+      )}
+
+      {tab === "hiring" && (
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Panel title="الطلبات الواردة">
+            {apps.length === 0 ? (
+              <p className="text-sm text-[#13294B]/70">لا طلبات بعد. تصل هنا من فضاء «عروض العمل».</p>
+            ) : (
+              <ul className="space-y-2">
+                {apps.map((a) => (
+                  <li key={a.id} className={cn("rounded-2xl p-3", a.status === "new" ? "bg-[#FFF8E6] ring-1 ring-[#F5A524]/40" : "bg-[#F5F8FF]")}>
+                    <p className="text-sm font-bold">{a.name}</p>
+                    <p className="text-[13px] text-[#13294B]/70">{myJobs.find((j) => j.id === a.jobId)?.title} — {a.exp}</p>
+                    <p className="text-[11px] text-[#13294B]/70">{ago(a.at, now)}</p>
+                    {a.status === "new" ? (
+                      <div className="mt-2 flex gap-2">
+                        <Btn size="sm" tone="red" className="flex-1" onClick={() => { act.decideApplication(a.id, false); flash("أُرسل الرد للمترشح"); }}>اعتذر</Btn>
+                        <Btn size="sm" tone="green" className="flex-1" onClick={() => { act.decideApplication(a.id, true); flash("دُعي المترشح لمقابلة"); }}>ادعُ لمقابلة</Btn>
+                      </div>
+                    ) : (
+                      <Pill tone={a.status === "interview" ? "green" : "gray"} className="mt-2">{a.status === "interview" ? "مدعو لمقابلة" : "اعتُذر له"}</Pill>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Panel>
+          <div className="space-y-4">
+            <Panel title="انشر عرض عمل">
+              <form className="space-y-2" onSubmit={(e) => { e.preventDefault(); if (!job.title.trim()) return; act.postJob(job.title.trim(), job.kind, job.hours.trim(), job.note.trim()); flash("نُشر العرض في فضاء «عروض العمل»"); }}>
+                <input value={job.title} onChange={(e) => setJob({ ...job, title: e.target.value })} aria-label="المنصب" className={cn(input, "w-full")} />
+                <div className="grid grid-cols-2 gap-2">
+                  <select value={job.kind} onChange={(e) => setJob({ ...job, kind: e.target.value as Job["kind"] })} aria-label="الصنف" className={input}>
+                    {(["تدريس", "إدارة", "حراسة", "نظافة"] as const).map((k) => <option key={k}>{k}</option>)}
+                  </select>
+                  <input value={job.hours} onChange={(e) => setJob({ ...job, hours: e.target.value })} aria-label="الدوام" className={input} />
+                </div>
+                <input value={job.note} onChange={(e) => setJob({ ...job, note: e.target.value })} aria-label="الشروط" className={cn(input, "w-full")} />
+                <Btn type="submit" className="w-full">انشر العرض</Btn>
+              </form>
+            </Panel>
+            <Panel title="عروضكم المنشورة">
+              <ul className="space-y-2 text-sm">
+                {myJobs.map((j) => (
+                  <li key={j.id} className="flex items-center gap-2 rounded-xl bg-[#F5F8FF] p-3">
+                    <span className="min-w-0 flex-1"><b>{j.title}</b><span className="block text-[12px] text-[#13294B]/70">{w.applications.filter((a) => a.jobId === j.id).length} طلب</span></span>
+                    {j.open ? <Btn size="sm" tone="ghost" onClick={() => { act.closeJob(j.id); flash("أُغلق العرض"); }}>أغلق</Btn> : <Pill tone="gray">مغلق</Pill>}
+                  </li>
+                ))}
+              </ul>
+            </Panel>
+          </div>
+        </div>
       )}
 
       {tab === "reviews" && (

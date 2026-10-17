@@ -31,6 +31,7 @@ export function ParentView() {
 
   const myNotes = w.notes.filter((n) => n.to === "parent");
   const absences = w.absences.filter((a) => a.pupil === ME_CHILD);
+  const gate = w.gate.find((g) => g.pupil === ME_CHILD);
   const fees = w.fees.filter((f) => f.pupil === ME_CHILD);
   const myReqs = w.reqs.filter((r) => r.mine);
   const convs = w.convocations.filter((c) => c.pupil === ME_CHILD);
@@ -90,6 +91,19 @@ export function ParentView() {
                 </ul>
               </Panel>
               <div className="space-y-4">
+                <Panel title="الدخول والخروج اليوم" aside={<Pill tone="blue">البوابة</Pill>}>
+                  {gate?.in ? (
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <p className="rounded-xl bg-[#E7F6EF] p-3"><span className="block text-[12px] text-[#0A7554]">دخل</span><b className="num">{gate.in}</b></p>
+                      <p className="rounded-xl bg-[#F5F8FF] p-3"><span className="block text-[12px] text-[#13294B]/70">خرج</span><b className="num">{gate.out ?? "لم يخرج بعد"}</b></p>
+                    </div>
+                  ) : (
+                    <Empty>لم يُسجَّل دخول آدم بعد. يصلك تنبيه لحظة دخوله وخروجه.</Empty>
+                  )}
+                </Panel>
+                <Panel title="النقل المدرسي" aside={<Pill tone="gray">قريبًا</Pill>}>
+                  <p className="text-sm text-[#13294B]/70">طلب نقل آمن من البيت إلى المدرسة، مع شركاء نقل نعمل على الاتفاق معهم.</p>
+                </Panel>
                 <Panel title="غيابات آدم">
                   {absences.length === 0 ? (
                     <Empty>لا غياب. إذا سجّل الأستاذ غيابًا ستصلك رسالة هنا فورًا.</Empty>
@@ -224,7 +238,11 @@ export function ParentView() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-3 text-xs text-[#13294B]/70">الدفع يتم خارج المنصة (بريدي موب، CCP أو نقدًا)؛ المنصة تنقل الوصل للمحاسبة وتحفظ التأكيد.</p>
+              <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl border border-dashed border-[#1F3C88]/20 p-3">
+                <span className="text-sm"><b>الدفع بالبطاقة (CIB / الذهبية)</b><span className="block text-[12px] text-[#13294B]/70">مباشرة من الهاتف، دون التنقل للبريد.</span></span>
+                <Pill tone="gray">مرحلة لاحقة</Pill>
+              </div>
+              <p className="mt-3 text-xs text-[#13294B]/70">حاليًا الدفع يتم خارج المنصة (بريدي موب، CCP أو نقدًا)؛ المنصة تنقل الوصل للمحاسبة وتحفظ التأكيد.</p>
             </Panel>
           )}
 

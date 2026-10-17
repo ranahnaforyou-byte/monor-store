@@ -8,6 +8,7 @@ import { DemoCtx, focus } from "./ui";
 import { AccountingView } from "./views/accounting";
 import { DirectorView } from "./views/director";
 import { DirectoryView } from "./views/directory";
+import { JobsView } from "./views/jobs";
 import { ParentView } from "./views/parent";
 import { ReceptionView } from "./views/reception";
 import { StudentView } from "./views/student";
@@ -17,7 +18,7 @@ import { TeacherView } from "./views/teacher";
 const GROUPS: { label: string; roles: Role[] }[] = [
   { label: "داخل المدرسة", roles: ["director", "supervisor", "reception", "accounting", "teacher"] },
   { label: "العائلة", roles: ["parent", "student"] },
-  { label: "للجميع", roles: ["directory"] },
+  { label: "للجميع", roles: ["directory", "jobs"] },
 ];
 
 /** The 3-minute tour: each step names the role to open and what to press. */
@@ -42,6 +43,7 @@ const VIEWS: Record<Role, () => React.JSX.Element> = {
   parent: ParentView,
   student: StudentView,
   directory: DirectoryView,
+  jobs: JobsView,
 };
 
 export function MadrassaDemo({ initialView }: { initialView: Role }) {

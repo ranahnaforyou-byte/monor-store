@@ -5,7 +5,7 @@
  * Fictional people and institutions (demo data).
  */
 
-export type Role = "director" | "supervisor" | "reception" | "accounting" | "teacher" | "parent" | "student" | "directory";
+export type Role = "director" | "supervisor" | "reception" | "accounting" | "teacher" | "parent" | "student" | "directory" | "jobs";
 
 export const ROLES: { key: Role; label: string; who: string }[] = [
   { key: "director", label: "المدير", who: "نادية حمدي" },
@@ -16,6 +16,7 @@ export const ROLES: { key: Role; label: string; who: string }[] = [
   { key: "parent", label: "الولي", who: "كريم بوعلام" },
   { key: "student", label: "التلميذ", who: "آدم بوعلام" },
   { key: "directory", label: "الدليل العام", who: "للجميع" },
+  { key: "jobs", label: "عروض العمل", who: "للباحثين عن عمل" },
 ];
 export const ROLE_KEYS = ROLES.map((r) => r.key);
 export const roleLabel = (r: Role) => ROLES.find((x) => x.key === r)!.label;
@@ -43,7 +44,10 @@ export type Homework = { id: number; subject: string; text: string; due: string;
 export type Announcement = { id: number; from: string; text: string; at: Stamp };
 export type Exam = { id: number; title: string; published: boolean; marks: Record<string, string> };
 export type Session = { id: number; day: string; time: string; subject: string; room: string; change?: string };
-export type Review = { id: number; school: string; by: string; stars: number; text: string; reply?: string; at: Stamp };
+export type Review = { id: number; school: string; by: string; student?: boolean; stars: number; text: string; reply?: string; at: Stamp };
+export type Job = { id: number; school: string; title: string; kind: "تدريس" | "إدارة" | "حراسة" | "نظافة"; hours: string; note: string; open: boolean };
+export type Application = { id: number; jobId: number; name: string; exp: string; status: "new" | "interview" | "declined"; at: Stamp };
+export type Gate = { pupil: string; in?: string; out?: string };
 export type Staff = { id: number; name: string; job: string; perms: Record<string, boolean> };
 
 export const REQ_STAGES = ["جديد", "اتصال", "اختبار المستوى", "مقبول", "مسجّل"];
@@ -68,9 +72,12 @@ export type World = {
   reviews: Review[];
   staff: Staff[];
   attendanceSent: boolean;
+  jobs: Job[];
+  applications: Application[];
+  gate: Gate[];
 };
 
-export const VERSION = 5;
+export const VERSION = 6;
 
 export function seed(): World {
   const all = (on: string[]) => Object.fromEntries(PERMS.map((p) => [p, on.includes(p)]));
@@ -145,10 +152,12 @@ export function seed(): World {
       { id: 1, school: "najah", by: "وليّ تلميذ في 4 متوسط", stars: 5, text: "متابعة يومية واضحة، ونعرف بالغياب في نفس الساعة.", reply: "شكرًا لثقتكم.", at: "سبتمبر" },
       { id: 2, school: "najah", by: "وليّة تلميذة في 1 متوسط", stars: 4, text: "مستوى جيد، لكن النقل المدرسي يتأخر أحيانًا.", at: "سبتمبر" },
       { id: 3, school: "mostaqbal", by: "وليّ تلميذ في الابتدائي", stars: 4, text: "اهتمام جيد بالرياضيات والعلوم.", at: "أكتوبر" },
-      { id: 4, school: "ofoq", by: "متعلّم راشد", stars: 5, text: "اختبار مستوى دقيق وأفواج صغيرة.", reply: "سعداء بتقدّمك!", at: "أكتوبر" },
+      { id: 4, school: "ofoq", by: "متعلّم راشد", student: true, stars: 5, text: "اختبار مستوى دقيق وأفواج صغيرة.", reply: "سعداء بتقدّمك!", at: "أكتوبر" },
       { id: 5, school: "tafawok", by: "وليّة تلميذ في البكالوريا", stars: 5, text: "تحسّن واضح في الرياضيات خلال شهرين.", at: "أكتوبر" },
-      { id: 6, school: "itqane", by: "متربّص", stars: 4, text: "تكوين تطبيقي وتربص في مؤسسات.", at: "سبتمبر" },
+      { id: 6, school: "itqane", by: "متربّص في الإعلام الآلي", student: true, stars: 4, text: "تكوين تطبيقي وتربص في مؤسسات.", at: "سبتمبر" },
       { id: 7, school: "nour-oran", by: "وليّ تلميذ في الابتدائي", stars: 4, text: "إدارة متعاونة ومعلمون أكفاء.", at: "سبتمبر" },
+      { id: 8, school: "lamsa", by: "متربّصة في الحلاقة", student: true, stars: 5, text: "تطبيق يومي على زبائن حقيقيين، والمكوّنة صبورة.", reply: "بالتوفيق في الامتحان النهائي!", at: "أكتوبر" },
+      { id: 9, school: "lamsa", by: "متربّصة في التجميل", student: true, stars: 4, text: "البرنامج واضح، لكن الأفواج كبيرة قليلًا.", at: "سبتمبر" },
     ],
     staff: [
       { id: 1, name: "رشيد بلقاسم", job: "مستشار التربية", perms: all(["الغيابات", "الرسائل"]) },
@@ -158,6 +167,24 @@ export function seed(): World {
       { id: 5, name: "فريد زروقي", job: "أستاذ الفيزياء", perms: all(["الغيابات", "النقاط"]) },
     ],
     attendanceSent: false,
+    jobs: [
+      { id: 1, school: "najah", title: "أستاذ(ة) لغة إنجليزية — المتوسط", kind: "تدريس", hours: "دوام كامل", note: "ليسانس إنجليزية، خبرة سنتين على الأقل", open: true },
+      { id: 2, school: "mostaqbal", title: "حارس ليلي", kind: "حراسة", hours: "ليلي، 6 ليالٍ", note: "خبرة في الحراسة، سجل عدلي نظيف", open: true },
+      { id: 3, school: "najah", title: "عاملة نظافة", kind: "نظافة", hours: "صباحي 06:30 – 13:00", note: "قرب حيدرة مفضّل", open: true },
+      { id: 4, school: "itqane", title: "مكوّن(ة) إعلام آلي", kind: "تدريس", hours: "مسائي", note: "إتقان Excel وWord، خبرة في التكوين", open: true },
+      { id: 5, school: "ofoq", title: "مسؤول(ة) استقبال وتسجيلات", kind: "إدارة", hours: "دوام كامل", note: "العربية والفرنسية، حسن التعامل مع الأولياء", open: true },
+    ],
+    applications: [{ id: 1, jobId: 1, name: "ليلى حمّادي", exp: "4 سنوات في مدرسة خاصة ببن عكنون", status: "new", at: "أمس" }],
+    gate: [
+      { pupil: "إيناس شريف", in: "07:41" },
+      { pupil: "يونس قادري" },
+      { pupil: "مريم عيساوي", in: "07:49" },
+      { pupil: "رامي حداد", in: "08:07" },
+      { pupil: "لينا مزيان", in: "07:44" },
+      { pupil: "سارة بن يوسف", in: "07:52" },
+      { pupil: "أنيس طالبي", in: "07:38" },
+      { pupil: "آدم بوعلام" },
+    ],
   };
 }
 
@@ -340,6 +367,39 @@ export const reducers = {
   },
   reply(w0: World, id: number, text: string): World {
     return ((w: World) => ({ ...w, reviews: map(w.reviews, id, (r) => ({ ...r, reply: text })) }))(w0);
+  },
+
+  // jobs (public board) and hiring (director)
+  postJob(w0: World, title: string, kind: Job["kind"], hours: string, note: string): World {
+    return ((w: World) => notify({ ...w, jobs: [{ id: nid(), school: "najah", title, kind, hours, note, open: true }, ...w.jobs] }, ["jobs"], `عرض عمل جديد: ${title} — ${SCHOOL.name}`, "request"))(w0);
+  },
+  applyJob(w0: World, jobId: number, name: string, exp: string): World {
+    return ((w: World) => {
+      const j = w.jobs.find((x) => x.id === jobId)!;
+      const x: World = { ...w, applications: [{ id: nid(), jobId, name, exp, status: "new", at: Date.now() }, ...w.applications] };
+      return j.school === "najah" ? notify(x, ["director"], `طلب توظيف جديد: ${name} — ${j.title}`, "request") : x;
+    })(w0);
+  },
+  decideApplication(w0: World, id: number, ok: boolean): World {
+    return ((w: World) => {
+      const a = w.applications.find((x) => x.id === id)!;
+      const x: World = { ...w, applications: map(w.applications, id, (y) => ({ ...y, status: ok ? "interview" : "declined" })) };
+      return notify(x, ["jobs"], ok ? `${a.name}: دُعيت لمقابلة في ${SCHOOL.name}` : `${a.name}: شكرًا لاهتمامك، لم يُقبل الطلب هذه المرة`, "approval");
+    })(w0);
+  },
+  closeJob(w0: World, id: number): World {
+    return ((w: World) => ({ ...w, jobs: map(w.jobs, id, (j) => ({ ...j, open: false })) }))(w0);
+  },
+
+  // gate: entries and exits checked against class attendance
+  gateMark(w0: World, pupil: string, dir: "in" | "out", time: string): World {
+    return ((w: World) => {
+      const has = w.gate.some((g) => g.pupil === pupil);
+      const gate = has ? w.gate.map((g) => (g.pupil === pupil ? { ...g, [dir]: time } : g)) : [...w.gate, { pupil, [dir]: time }];
+      const x: World = { ...w, gate };
+      if (pupil !== ME_CHILD) return x;
+      return notify(x, ["parent", "student"], dir === "in" ? `دخل آدم إلى المدرسة على الساعة ${time}` : `خرج آدم من المدرسة على الساعة ${time}`, "schedule");
+    })(w0);
   },
 
   // student

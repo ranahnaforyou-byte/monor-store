@@ -3,7 +3,7 @@ import { MFooter, MHeader } from "@/components/madrassa/brand";
 import { MadrassaDemo } from "@/components/madrassa/demo";
 import type { Role } from "@/components/madrassa/store";
 
-const ROLE_KEYS: Role[] = ["director", "supervisor", "reception", "accounting", "teacher", "parent", "student", "directory"];
+const ROLE_KEYS: Role[] = ["director", "supervisor", "reception", "accounting", "teacher", "parent", "student", "directory", "jobs"];
 
 export const metadata: Metadata = {
   title: { absolute: "جرّب MA DRASSA — كل الأدوار" },

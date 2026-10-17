@@ -13,6 +13,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run lint",
+    "test:madrassa": "node scripts/madrassa-e2e.mjs",
     "postinstall": "prisma generate",
     "db:up": "tsx scripts/pg-dev.ts start",
     "db:down": "tsx scripts/pg-dev.ts stop",

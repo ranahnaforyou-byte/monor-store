@@ -76,7 +76,7 @@ export function MFooter() {
         </div>
         <div className="flex flex-col items-center gap-1 md:items-end">
           <span className="rounded-full border border-[#1F3C88]/15 px-2.5 py-0.5 text-[11px] font-medium text-[#1F3C88]/60">بيانات تجريبية</span>
-          <p className="text-xs text-[#1F3C88]/50">© {new Date().getFullYear()} MA DRASSA · الجزائر العاصمة · وهران</p>
+          <p className="text-xs text-[#1F3C88]/50">© {new Date().getFullYear()} MA DRASSA · الجزائر العاصمة</p>
         </div>
       </div>
     </footer>

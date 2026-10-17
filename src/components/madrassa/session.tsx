@@ -95,7 +95,7 @@ export function SessionBar({ view }: { view: Role }) {
           <div className="space-y-2">
             <p className="text-sm font-bold">الهاتف الآخر يفتح دور:</p>
             <div className="flex flex-wrap gap-1.5">
-              {ROLES.filter((r) => r.key !== "directory").map((r) => (
+              {ROLES.filter((r) => r.key !== "directory" && r.key !== "jobs").map((r) => (
                 <button key={r.key} type="button" onClick={() => setOther(r.key)} className={cn("h-9 rounded-full px-3 text-[13px] font-bold", focus, other === r.key ? "bg-[#1F3C88] text-white" : "bg-[#E9EEFB] text-[#1F3C88]")}>
                   {r.label}
                 </button>

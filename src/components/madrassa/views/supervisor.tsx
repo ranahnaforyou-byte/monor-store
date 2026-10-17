@@ -10,13 +10,22 @@ const CHANGES = ["ملغاة — غياب الأستاذ", "معوّضة الس�
 export function SupervisorView() {
   const w = useWorld();
   const { flash, now } = useDemo();
-  const [tab, setTab] = useState<"absences" | "discipline" | "schedule" | "messages">("absences");
+  const [tab, setTab] = useState<"gate" | "absences" | "discipline" | "schedule" | "messages">("absences");
   const [pupil, setPupil] = useState(PUPILS[0]);
   const [text, setText] = useState("استعمال الهاتف أثناء الحصة");
   const [when, setWhen] = useState("الأربعاء 15:00");
   const [sid, setSid] = useState(5);
   const [change, setChange] = useState(CHANGES[0]);
 
+  // gate vs class: who came in, who is in class, and where they disagree
+  const gateRows = PUPILS.map((p) => {
+    const g = w.gate.find((x) => x.pupil === p);
+    const absentInClass = w.absences.some((a) => a.pupil === p && a.date === "اليوم");
+    const flag = g?.in && absentInClass ? "in-not-class" : !g?.in && w.attendanceSent && !absentInClass ? "class-not-in" : null;
+    return { p, g, absentInClass, flag };
+  });
+  const alerts = gateRows.filter((r) => r.flag).length;
+  const clock = () => new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
   const sent = w.absences.filter((a) => a.status === "sent");
   const open = w.absences.filter((a) => a.status === "open");
 
@@ -30,7 +39,7 @@ export function SupervisorView() {
         <Stat icon="alert" label="غياب بلا تبرير" value={open.length} tone="red" />
         <Stat icon="people" label="استدعاءات" value={w.convocations.length} />
       </div>
-      <Tabs value={tab} onChange={setTab} items={[["absences", "الغيابات", sent.length], ["discipline", "الانضباط والاستدعاءات"], ["schedule", "استعمال الزمن"], ["messages", "الرسائل تحت الإشراف"]]} />
+      <Tabs value={tab} onChange={setTab} items={[["absences", "الغيابات", sent.length], ["gate", "البوابة", alerts], ["discipline", "الانضباط والاستدعاءات"], ["schedule", "استعمال الزمن"], ["messages", "الرسائل تحت الإشراف"]]} />
 
       {tab === "absences" && (
         <Panel title="الغيابات والتبريرات">
@@ -89,6 +98,36 @@ export function SupervisorView() {
             </Panel>
           </div>
         </div>
+      )}
+
+      {tab === "gate" && (
+        <Panel title={`البوابة — ${CLASS}، اليوم`} aside={alerts ? <Pill tone="red">{alerts} للتحقق</Pill> : <Pill tone="green">كل شيء مطابق</Pill>}>
+          <p className="mb-3 text-[13px] text-[#13294B]/70">الحارس يسجّل الدخول والخروج (بالبطاقة أو بالاسم)، والنظام يقارنه بحضور القسم. الولي يُنبَّه عند دخول ابنه وخروجه.</p>
+          <ul className="space-y-2">
+            {gateRows.map(({ p, g, absentInClass, flag }) => (
+              <li key={p} className={cn("flex flex-wrap items-center gap-3 rounded-2xl p-3", flag === "in-not-class" ? "bg-[#FFF5F4] ring-1 ring-[#D63C37]/30" : flag ? "bg-[#FFFAF0] ring-1 ring-[#F5A524]/40" : "bg-[#F5F8FF]")}>
+                <Avatar name={p} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold">{p}</p>
+                  <p className="text-[12px] text-[#13294B]/70">
+                    {g?.in ? `دخل ${g.in}` : "لم يُسجَّل دخوله"}
+                    {g?.out ? ` — خرج ${g.out}` : ""}
+                    {absentInClass ? " — غائب في القسم" : w.attendanceSent ? " — حاضر في القسم" : ""}
+                  </p>
+                  {flag && (
+                    <p className={cn("mt-0.5 text-[12px] font-bold", flag === "in-not-class" ? "text-[#B42F2A]" : "text-[#8A5A0B]")}>
+                      {flag === "in-not-class" ? "دخل المدرسة ولم يحضر الحصة — تحقّق فورًا" : "حاضر في القسم دون تسجيل دخول — تحقّق من البوابة"}
+                    </p>
+                  )}
+                </div>
+                <span className="flex gap-1.5">
+                  {!g?.in && <Btn size="sm" tone="ghost" onClick={() => { act.gateMark(p, "in", clock()); flash(`سُجّل دخول ${p}`); }}>دخل</Btn>}
+                  {g?.in && !g?.out && <Btn size="sm" tone="ghost" onClick={() => { act.gateMark(p, "out", clock()); flash(`سُجّل خروج ${p}`); }}>خرج</Btn>}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Panel>
       )}
 
       {tab === "schedule" && (

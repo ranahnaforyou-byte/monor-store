@@ -125,6 +125,7 @@ async function pull() {
     let changed = false;
     if (r.status === 200 && inflight === 0) {
       const d = (await r.json()) as { v: number; world: World };
+      if (d.world.v !== VERSION) return setSync({ ...sync, room, status: "missing" }); // a session from an older demo
       if (d.v > version) {
         version = d.v;
         world = d.world;
