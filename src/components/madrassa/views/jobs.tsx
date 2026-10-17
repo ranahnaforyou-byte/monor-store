@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { act, ago, useWorld, type Job } from "../store";
+import { act, ago, info, useWorld, type Job } from "../store";
 import { Btn, Empty, NoteCard, Pill, card, focus, input, useDemo } from "../ui";
-import { SCHOOLS, schoolName } from "./directory";
+import { schoolsFor } from "./directory";
 
 const KINDS: ("الكل" | Job["kind"])[] = ["الكل", "تدريس", "إدارة", "حراسة", "نظافة"];
 
@@ -19,7 +19,9 @@ export function JobsView() {
 
   const list = w.jobs.filter((j) => j.open && (kind === "الكل" || j.kind === kind));
   const notes = w.notes.filter((n) => n.to === "jobs").slice(0, 3);
-  const area = (id: string) => SCHOOLS.find((s) => s.id === id)?.area ?? "";
+  const all = schoolsFor(info(w));
+  const area = (id: string) => all.find((s) => s.id === id)?.area ?? "";
+  const schoolName = (id: string) => all.find((s) => s.id === id)?.name ?? id;
 
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">

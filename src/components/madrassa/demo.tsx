@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { SessionBar } from "./session";
-import { ROLES, act, unreadCount, useRead, useSync, useWorld, type Role } from "./store";
+import { act, info, roleName, roleWho, unreadCount, useRead, useSync, useWorld, type Role } from "./store";
 import { DemoCtx, focus } from "./ui";
 import { AccountingView } from "./views/accounting";
 import { DirectorView } from "./views/director";
@@ -49,6 +49,7 @@ const VIEWS: Record<Role, () => React.JSX.Element> = {
 export function MadrassaDemo({ initialView }: { initialView: Role }) {
   const w = useWorld();
   const seen = useRead();
+  const S = info(w);
   const sync = useSync();
   const guest = !!sync.room && !sync.host; // a second phone: no presenter tour
   const [view, setView] = useState<Role>(initialView);
@@ -111,7 +112,6 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
               <div key={g.label} className="flex shrink-0 gap-2 lg:flex-col lg:gap-1">
                 <p className="hidden px-3 text-[12px] font-bold text-[#13294B]/55 lg:block">{g.label}</p>
                 {g.roles.map((key) => {
-                  const r = ROLES.find((x) => x.key === key)!;
                   const n = view === key ? 0 : unreadCount(w, key, seen);
                   const active = view === key;
                   return (
@@ -127,8 +127,8 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
                       )}
                     >
                       <span className="flex flex-col leading-tight">
-                        <span className="text-[15px] font-black">{r.label}</span>
-                        <span className={cn("text-[11px]", active ? "text-white/70" : "text-[#13294B]/70")}>{r.who}</span>
+                        <span className="text-[15px] font-black">{roleName(key, S)}</span>
+                        <span className={cn("text-[11px]", active ? "text-white/70" : "text-[#13294B]/70")}>{roleWho(key, S)}</span>
                       </span>
                       {n > 0 && (
                         <span className="num anim-pop absolute -top-1.5 -start-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#D63C37] px-1 text-[11px] font-bold text-white lg:static lg:ms-auto" aria-label={`${n} جديد`}>
@@ -146,6 +146,9 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
             <button type="button" onClick={() => { act.reset(); setStep(0); flash("أُعيدت البيانات التجريبية"); }} className={cn("mx-3 text-[13px] font-bold text-[#1F3C88] underline-offset-4 hover:underline", focus)}>
               أعد البيانات من البداية
             </button>
+            <a href="/madrassa/build" className={cn("mx-3 block text-[13px] font-bold text-[#1F3C88] underline-offset-4 hover:underline", focus)}>
+              أنشئ نسخة لمؤسسة
+            </a>
           </div>
         </nav>
 
@@ -158,7 +161,7 @@ export function MadrassaDemo({ initialView }: { initialView: Role }) {
             <span className="num flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F5A524] font-black text-[#13294B]">{step + 1}</span>
             <p className="min-w-0 flex-1 text-sm font-semibold leading-snug">
               <span className="text-white/55">جولة {step + 1}/{TOUR.length} — </span>
-              {tour.text}
+              {roleName(tour.role, S)}: {tour.text.replace(/^[^:]+: /, "")}
             </p>
             {view !== tour.role ? (
               <button type="button" onClick={() => go(tour.role)} className={cn("h-9 shrink-0 rounded-xl bg-white px-3 text-[13px] font-bold text-[#13294B]", focus)}>افتح</button>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { VERSION, applyAction, seed, type ActionArgs, type ActionName, type Role, type World } from "./world";
+import { PRESETS } from "./profiles";
+import { DEFAULT_PROFILE, VERSION, applyAction, decodeProfile, seed, type ActionArgs, type ActionName, type Profile, type Role, type World } from "./world";
 
 export * from "./world";
 
@@ -34,15 +35,18 @@ const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((l) => l());
 
 // ------------------------------------------------------------- persistence
+/** The institution asked for in the link (?p=…), if any. */
+let wanted: Profile | undefined;
+const same = (a?: Profile, b?: Profile) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 function readLocal(): World {
   try {
     const raw = window.localStorage.getItem(KEY);
     if (raw) {
       const w = JSON.parse(raw) as World;
-      if (w.v === VERSION) return w;
+      if (w.v === VERSION && same(w.profile, wanted)) return w;
     }
   } catch {}
-  return seed();
+  return seed(wanted);
 }
 function saveLocal() {
   if (sync.room) return; // a session's world belongs to the server
@@ -59,6 +63,9 @@ function saveRead() {
 function load() {
   if (loaded || typeof window === "undefined") return;
   loaded = true;
+  const q = new URLSearchParams(window.location.search);
+  const preset = PRESETS[q.get("school") ?? ""];
+  wanted = decodeProfile(q.get("p")) ?? (preset && preset.profile.name !== DEFAULT_PROFILE.name ? preset.profile : undefined);
   world = readLocal();
   try {
     read = new Set(JSON.parse(window.localStorage.getItem(READ_KEY) ?? "[]") as number[]);
@@ -77,7 +84,7 @@ function load() {
       return null;
     }
   })();
-  const room = fromUrl ?? last;
+  const room = fromUrl ?? (q.has("p") || q.has("school") ? null : last); // a new institution link starts fresh
   if (room && /^\d{4}$/.test(room)) window.setTimeout(() => void joinRoom(room), 0); // never emit during a render
 }
 
@@ -178,7 +185,7 @@ export async function joinRoom(code: string) {
 
 export async function createRoom(): Promise<string | null> {
   try {
-    const r = await fetch("/api/madrassa/room", { method: "POST" });
+    const r = await fetch("/api/madrassa/room", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ profile: world.profile ?? null }) });
     if (!r.ok) return null;
     const { code } = (await r.json()) as { code: string };
     try {
@@ -251,7 +258,7 @@ export const act = new Proxy({} as Acts, {
         read = new Set();
         saveRead();
         if (sync.room) {
-          world = seed();
+          world = seed(world.profile);
           emit();
           send("reset", []);
           return;
@@ -259,7 +266,7 @@ export const act = new Proxy({} as Acts, {
         try {
           window.localStorage.removeItem(KEY);
         } catch {}
-        world = seed();
+        world = seed(world.profile);
         emit();
       };
     if (name === "markRead")

@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { act, fmt, useWorld } from "../store";
+import { DEFAULT_PROFILE, act, fmt, info, useWorld, type Profile } from "../store";
 import { Btn, Pill, Stars, card, focus, input, useDemo } from "../ui";
 
 type Kind = "مدرسة خاصة" | "مركز لغات" | "مركز دعم" | "تكوين مهني";
@@ -51,29 +51,46 @@ export const SCHOOLS: School[] = [
   },
 ];
 const AREAS = ["الكل", "حيدرة", "بن عكنون", "دالي إبراهيم", "باب الزوار", "الرويبة", "بودواو (بومرداس)"] as const;
-export const schoolName = (id: string) => SCHOOLS.find((s) => s.id === id)?.name ?? id;
+const AREA_COORDS: Record<string, [number, number]> = {
+  "حيدرة": [36.742, 3.03], "بن عكنون": [36.759, 3.013], "دالي إبراهيم": [36.754, 2.988], "الشراقة": [36.766, 2.96], "باب الزوار": [36.721, 3.183],
+  "الدار البيضاء": [36.714, 3.212], "الرويبة": [36.738, 3.281], "بودواو": [36.727, 3.41], "بودواو (بومرداس)": [36.727, 3.41], "باب الوادي": [36.79, 3.05], "القبة": [36.725, 3.085],
+};
+
+/** The directory as seen for one institution: its own entry replaces the default demo school. */
+export function schoolsFor(p: Profile): School[] {
+  if (p.name === DEFAULT_PROFILE.name) return SCHOOLS;
+  const kindMap: Record<Profile["kind"], School["kind"]> = { school: "مدرسة خاصة", language: "مركز لغات", training: "تكوين مهني", support: "مركز دعم" };
+  return SCHOOLS.map((s) =>
+    s.id === "najah"
+      ? { ...s, name: p.name, area: p.area, kind: kindMap[p.kind], levels: p.levels, fee: p.fee, regFee: p.regFee, hours: p.hours, length: p.length, diploma: p.diploma, subjects: `${p.subject} وتخصصات المؤسسة`, coords: AREA_COORDS[p.area.trim()] ?? s.coords, img: undefined, team: [{ name: p.teacher, subject: p.subject, cv: "المؤهلات تُعرض بموافقة صاحبها" }] }
+      : s,
+  );
+}
+export const schoolName = (id: string, p: Profile = DEFAULT_PROFILE) => schoolsFor(p).find((s) => s.id === id)?.name ?? id;
 
 export function DirectoryView() {
   const w = useWorld();
+  const S = info(w);
+  const ALL = schoolsFor(S);
   const { flash } = useDemo();
   const [q, setQ] = useState("");
-  const [city, setCity] = useState<(typeof AREAS)[number]>("الكل");
+  const [city, setCity] = useState<string>("الكل");
   const [kind, setKind] = useState<"الكل" | Kind>("الكل");
   const [open, setOpen] = useState<string | null>("najah");
   const [compare, setCompare] = useState<string[]>([]);
   const [child, setChild] = useState("نور بوعلام");
   const [level, setLevel] = useState("1 متوسط");
 
-  const rating = useMemo(() => {
+  const rating = (() => {
     const r: Record<string, { avg: number; n: number }> = {};
-    for (const s of SCHOOLS) {
+    for (const s of ALL) {
       const rs = w.reviews.filter((x) => x.school === s.id);
       r[s.id] = { avg: rs.length ? rs.reduce((a, b) => a + b.stars, 0) / rs.length : 0, n: rs.length };
     }
     return r;
-  }, [w.reviews]);
+  })();
 
-  const list = SCHOOLS.filter(
+  const list = ALL.filter(
     (s) => (city === "الكل" || s.area === city) && (kind === "الكل" || s.kind === kind) && (!q.trim() || (s.name + s.area + s.levels).includes(q.trim())),
   );
 
@@ -89,7 +106,7 @@ export function DirectoryView() {
           </svg>
         </label>
         <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
-          {AREAS.map((c) => (
+          {(AREAS.includes(S.area as (typeof AREAS)[number]) ? AREAS : [...AREAS, S.area]).map((c) => (
             <button key={c} type="button" onClick={() => setCity(c)} className={cn("h-9 shrink-0 rounded-full px-3.5 text-sm font-bold", focus, city === c ? "bg-[#1F3C88] text-white" : "bg-[#E9EEFB] text-[#1F3C88]")}>
               {c === "الكل" ? "كل الأحياء" : c}
             </button>
@@ -137,7 +154,7 @@ export function DirectoryView() {
 
                 {isOpen && (
                   <div className="anim-pop mt-4 space-y-3 border-t border-[#1F3C88]/10 pt-4">
-                    {s.id === "najah" && (
+                    {s.id === "najah" && !s.img ? null : s.id === "najah" && (
                       <div className="relative overflow-hidden rounded-2xl">
                         <Image src="/madrassa/school-ofoq-hero.webp" alt={`واجهة ${s.name} (صورة توضيحية)`} width={540} height={265} className="h-40 w-full object-cover sm:h-52" />
                         <Pill tone="green" className="absolute bottom-2 start-2">مؤسسة موثّقة</Pill>
@@ -238,7 +255,7 @@ export function DirectoryView() {
                 <thead>
                   <tr>
                     <th className="py-2 text-start"><span className="sr-only">البند</span></th>
-                    {compare.map((id) => <th key={id} className="py-2 text-start font-bold">{SCHOOLS.find((s) => s.id === id)!.name}</th>)}
+                    {compare.map((id) => <th key={id} className="py-2 text-start font-bold">{ALL.find((s) => s.id === id)!.name}</th>)}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#1F3C88]/10">
@@ -254,7 +271,7 @@ export function DirectoryView() {
                   ).map(([label, get]) => (
                     <tr key={label}>
                       <td className="py-2 pe-2 text-[#13294B]/70">{label}</td>
-                      {compare.map((id) => <td key={id} className="py-2 pe-2 font-semibold">{get(SCHOOLS.find((s) => s.id === id)!)}</td>)}
+                      {compare.map((id) => <td key={id} className="py-2 pe-2 font-semibold">{get(ALL.find((s) => s.id === id)!)}</td>)}
                     </tr>
                   ))}
                 </tbody>

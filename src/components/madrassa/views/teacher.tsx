@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { CLASS, PUPILS, SCHOOL, act, ago, useWorld } from "../store";
+import { PUPILS, act, ago, useWorld, info } from "../store";
 import { Avatar, Btn, Panel, Pill, RoleHead, Tabs, card, focus, input, useDemo } from "../ui";
 
 export function TeacherView() {
   const w = useWorld();
+  const S = info(w);
   const { flash, now } = useDemo();
   const [tab, setTab] = useState<"attendance" | "grades" | "homework" | "messages">("attendance");
   const [absent, setAbsent] = useState<Record<string, boolean>>({});
@@ -17,16 +18,16 @@ export function TeacherView() {
   const t = w.threads.find((x) => x.with === "teacher")!;
   const marks = Object.values(w.exam.marks).map(Number).filter((n) => !Number.isNaN(n));
   const avg = marks.length ? marks.reduce((a, b) => a + b, 0) / marks.length : 0;
-  const changes = w.sessions.filter((s) => s.change && s.subject === "الرياضيات");
+  const changes = w.sessions.filter((s) => s.change && s.subject === S.subject);
   const lastFromParent = t.msgs[t.msgs.length - 1]?.by === "parent";
 
   return (
     <div className="space-y-4">
       <div className={cn(card, "flex flex-wrap items-center justify-between gap-3 p-4 sm:p-5")}>
-        <RoleHead name="أ. سميرة مداني" line={`أستاذة الرياضيات — ${SCHOOL.name}`} tone="bg-[#FEF3DC] text-[#8A5A0B]" />
+        <RoleHead name={S.teacher} line={`${S.teacherTitle} ${S.subject} — ${S.name}`} tone="bg-[#FEF3DC] text-[#8A5A0B]" />
         <div className="flex flex-wrap gap-2">
-          <Pill tone="blue">{CLASS}</Pill>
-          <Pill tone="gray">3 متوسط — ب</Pill>
+          <Pill tone="blue">{S.group}</Pill>
+          <Pill tone="gray">{S.kind === "school" ? "3 متوسط — ب" : "فوج مسائي"}</Pill>
         </div>
       </div>
       {changes.map((s) => <p key={s.id} className="rounded-2xl bg-[#FEF3DC] p-3 text-sm font-semibold text-[#8A5A0B]">تعديل من المستشار: {s.day} {s.time} — {s.change}</p>)}
@@ -116,8 +117,8 @@ export function TeacherView() {
 
       {tab === "homework" && (
         <div className="grid gap-4 lg:grid-cols-2">
-          <Panel title={`واجب جديد — ${CLASS}`}>
-            <form className="space-y-2" onSubmit={(e) => { e.preventDefault(); if (!hw.trim()) return; act.addHomework("الرياضيات", hw.trim(), due); flash("نُشر الواجب للتلاميذ وأوليائهم"); }}>
+          <Panel title={`واجب جديد — ${S.group}`}>
+            <form className="space-y-2" onSubmit={(e) => { e.preventDefault(); if (!hw.trim()) return; act.addHomework(S.subject, hw.trim(), due); flash("نُشر الواجب للتلاميذ وأوليائهم"); }}>
               <textarea value={hw} onChange={(e) => setHw(e.target.value)} rows={3} aria-label="نص الواجب" className={cn(input, "h-auto w-full py-2")} />
               <div className="flex gap-2">
                 <select value={due} onChange={(e) => setDue(e.target.value)} aria-label="آخر أجل" className={cn(input, "flex-1")}>
@@ -130,7 +131,7 @@ export function TeacherView() {
           </Panel>
           <Panel title="الواجبات المنشورة">
             <ul className="space-y-2 text-sm">
-              {w.homework.filter((h) => h.subject === "الرياضيات").map((h) => <li key={h.id} className="rounded-xl bg-[#F5F8FF] p-3">{h.text}<span className="block text-[12px] text-[#13294B]/70">قبل {h.due}</span></li>)}
+              {w.homework.filter((h) => h.subject === S.subject).map((h) => <li key={h.id} className="rounded-xl bg-[#F5F8FF] p-3">{h.text}<span className="block text-[12px] text-[#13294B]/70">قبل {h.due}</span></li>)}
             </ul>
           </Panel>
         </div>

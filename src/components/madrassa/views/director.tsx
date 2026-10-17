@@ -2,17 +2,20 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { CLASS, PERMS, SCHOOL, act, ago, fmt, roleLabel, useWorld, type Job } from "../store";
+import { PERMS, act, ago, fmt, roleLabel, useWorld, type Job, info , type Profile } from "../store";
 import { Btn, Panel, Pill, RoleHead, Stars, Stat, Tabs, NoteCard, card, input, useDemo } from "../ui";
 
 /** Demo baseline for the whole school (fictional); the live demo class adds to it. */
-const BASE = { pupils: 286, collected: 4_590_000, expected: 5_148_000, absentToday: 9 };
-const CLASSES = [
-  ["1 متوسط — أ", 13.4], ["1 متوسط — ب", 12.1], ["2 متوسط — أ", 12.8], ["3 متوسط — أ", 11.6], ["3 متوسط — ب", 12.3],
-] as const;
+/** Demo baseline for the whole institution, scaled from its size and monthly fee. */
+const baseOf = (S: Profile) => ({ pupils: S.pupils, collected: Math.round(S.pupils * S.fee * 0.89), expected: S.pupils * S.fee, absentToday: Math.max(2, Math.round(S.pupils / 32)) });
+const groupsOf = (S: Profile): [string, number][] =>
+  S.kind === "school"
+    ? [["1 متوسط — أ", 13.4], ["1 متوسط — ب", 12.1], ["2 متوسط — أ", 12.8], ["3 متوسط — أ", 11.6], ["3 متوسط — ب", 12.3]]
+    : [[`${S.subject} — فوج صباحي`, 14.1], [`${S.subject} — فوج مسائي`, 12.9], ["فوج السبت", 13.6]];
 
 export function DirectorView() {
   const w = useWorld();
+  const S = info(w);
   const { flash, now } = useDemo();
   const [tab, setTab] = useState<"overview" | "approvals" | "staff" | "hiring" | "reviews">("overview");
   const [job, setJob] = useState({ title: "أستاذ(ة) رياضيات — المتوسط", kind: "تدريس" as Job["kind"], hours: "دوام كامل", note: "ليسانس رياضيات، خبرة سنة على الأقل" });
@@ -29,6 +32,8 @@ export function DirectorView() {
   const enrolled = w.reqs.filter((r) => r.stage === 4).length;
   const marks = Object.values(w.exam.marks).map(Number).filter((n) => !Number.isNaN(n));
   const myAvg = w.exam.published && marks.length ? marks.reduce((a, b) => a + b, 0) / marks.length : null;
+  const BASE = baseOf(S);
+  const CLASSES = groupsOf(S);
   const collected = BASE.collected + confirmed;
   const pct = Math.round((collected / BASE.expected) * 100);
   const feed = w.notes.filter((n) => n.to === "director");
@@ -37,7 +42,7 @@ export function DirectorView() {
   return (
     <div className="space-y-4">
       <div className={cn(card, "flex flex-wrap items-center justify-between gap-3 p-4 sm:p-5")}>
-        <RoleHead name="نادية حمدي" line={`مديرة ${SCHOOL.name} — ${SCHOOL.area}`} tone="bg-[#1F3C88] text-white" />
+        <RoleHead name="نادية حمدي" line={`مديرة ${S.name} — ${S.area}`} tone="bg-[#1F3C88] text-white" />
         <Pill tone="gray">أكتوبر</Pill>
       </div>
       <Tabs value={tab} onChange={setTab} items={[["overview", "نظرة عامة"], ["approvals", "الموافقات", pending.length], ["staff", "الموظفون والصلاحيات"], ["hiring", "التوظيف", newApps], ["reviews", "التقييمات"]]} />
@@ -45,7 +50,7 @@ export function DirectorView() {
       {tab === "overview" && (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <Stat icon="people" label="التلاميذ المسجّلون" value={BASE.pupils + enrolled} sub={`${w.reqs.filter((r) => r.stage < 4).length} طلبات قيد المعالجة`} />
+            <Stat icon="people" label={S.kind === "school" ? "التلاميذ المسجّلون" : "المتربّصون المسجّلون"} value={BASE.pupils + enrolled} sub={`${w.reqs.filter((r) => r.stage < 4).length} طلبات قيد المعالجة`} />
             <Stat icon="money" label="المحصّل هذا الشهر" value={fmt(collected)} sub={`${pct}٪ من المتوقع`} tone="green" />
             <Stat icon="clock" label="متأخرات" value={late.length} sub={fmt(late.reduce((a, b) => a + b.amount, 0)) + " في هذا القسم"} tone="red" />
             <Stat icon="alert" label="غيابات اليوم" value={BASE.absentToday + today.length} sub={`${w.absences.filter((a) => a.status === "sent").length} تبرير بانتظار المستشار`} tone="amber" />
@@ -63,19 +68,19 @@ export function DirectorView() {
               </ul>
             </Panel>
             <div className="space-y-4">
-              <Panel title="نتائج الأقسام — معدل الرياضيات">
+              <Panel title={`نتائج ${S.kind === "school" ? "الأقسام" : "الأفواج"} — معدل ${S.subject}`}>
                 <ul className="space-y-2.5">
-                  {[...CLASSES, [CLASS, myAvg] as const].map(([c, v]) => (
+                  {[...CLASSES, [S.group, myAvg] as const].map(([c, v]) => (
                     <li key={c} className="grid grid-cols-[96px_1fr_44px] items-center gap-2 text-sm">
-                      <span className={cn("truncate", c === CLASS && "font-bold")}>{c}</span>
+                      <span className={cn("truncate", c === S.group && "font-bold")}>{c}</span>
                       <span className="h-2 overflow-hidden rounded-full bg-[#E9EEFB]">
-                        {v != null && <span className={cn("block h-full rounded-full", c === CLASS ? "bg-[#F5A524]" : "bg-[#1F3C88]")} style={{ width: `${(v / 20) * 100}%` }} />}
+                        {v != null && <span className={cn("block h-full rounded-full", c === S.group ? "bg-[#F5A524]" : "bg-[#1F3C88]")} style={{ width: `${(v / 20) * 100}%` }} />}
                       </span>
                       <span className="num text-end font-bold">{v != null ? v.toFixed(1) : "—"}</span>
                     </li>
                   ))}
                 </ul>
-                {myAvg == null && <p className="mt-2 text-[12px] text-[#13294B]/70">{CLASS}: يظهر المعدل عندما تنشر الأستاذة النقاط.</p>}
+                {myAvg == null && <p className="mt-2 text-[12px] text-[#13294B]/70">{S.group}: يظهر المعدل عندما تنشر الأستاذة النقاط.</p>}
               </Panel>
               <Panel title="إعلان لكل الأولياء">
                 <form onSubmit={(e) => { e.preventDefault(); if (!ann.trim()) return; act.announce(ann.trim(), "المديرة"); flash("نُشر الإعلان — وصل للأولياء والتلاميذ والأساتذة"); }}>

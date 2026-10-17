@@ -1,6 +1,6 @@
 import "server-only";
 import { db } from "@/lib/db";
-import { seed, type World } from "@/components/madrassa/world";
+import { seed, type Profile, type World } from "@/components/madrassa/world";
 
 /**
  * MA DRASSA demo sessions («جلسة عرض»): one shared demo world per 4-digit code,
@@ -19,11 +19,11 @@ export async function readRoom(code: string): Promise<Room | null> {
   return { v: Number(row.status) || 0, world: row.payload as unknown as World };
 }
 
-export async function createRoom(): Promise<string> {
+export async function createRoom(profile?: Profile): Promise<string> {
   for (let i = 0; i < 8; i++) {
     const code = String(1000 + Math.floor(Math.random() * 9000));
     try {
-      await db.webhookEvent.create({ data: { source: ROOM_SOURCE, externalId: code, payload: seed() as object, status: "1" } });
+      await db.webhookEvent.create({ data: { source: ROOM_SOURCE, externalId: code, payload: seed(profile) as object, status: "1" } });
       return code;
     } catch {
       // code taken — try another

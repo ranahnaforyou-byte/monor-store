@@ -21,8 +21,22 @@ export const ROLES: { key: Role; label: string; who: string }[] = [
 export const ROLE_KEYS = ROLES.map((r) => r.key);
 export const roleLabel = (r: Role) => ROLES.find((x) => x.key === r)!.label;
 
-export const SCHOOL = { name: "مدرسة الأفق", area: "حيدرة، الجزائر العاصمة" };
-export const CLASS = "4 متوسط — أ";
+/** Everything that changes from one institution to another. Filled from the «أنشئ نسخة عرض» page. */
+export type Profile = {
+  name: string; area: string; kind: "school" | "language" | "training" | "support";
+  levels: string; group: string; teacher: string; teacherTitle: string; learnerTitle: string; subject: string;
+  fee: number; regFee: number; length: string; diploma: string; hours: string; pupils: number;
+};
+export const DEFAULT_PROFILE: Profile = {
+  name: "مدرسة الأفق", area: "حيدرة", kind: "school", levels: "تحضيري، ابتدائي، متوسط", group: "4 متوسط — أ",
+  teacher: "سميرة مداني", teacherTitle: "الأستاذة", learnerTitle: "التلميذ", subject: "الرياضيات",
+  fee: 18000, regFee: 15000, length: "3 فصول (سبتمبر – جوان)", diploma: "الامتحانات الرسمية: الابتدائي والمتوسط", hours: "07:45 – 16:30", pupils: 286,
+};
+export const KIND_LABEL: Record<Profile["kind"], string> = { school: "مدرسة خاصة", language: "مركز لغات", training: "تكوين مهني", support: "مركز دعم" };
+/** The institution of this world (falls back to the default demo school). */
+export const info = (w: { profile?: Partial<Profile> } | null | undefined): Profile => ({ ...DEFAULT_PROFILE, ...(w?.profile ?? {}) });
+export const roleName = (r: Role, p: Profile) => (r === "teacher" ? p.teacherTitle : r === "student" ? p.learnerTitle : ROLES.find((x) => x.key === r)!.label);
+export const roleWho = (r: Role, p: Profile) => (r === "teacher" ? p.teacher : ROLES.find((x) => x.key === r)!.who);
 export const PUPILS = ["آدم بوعلام", "إيناس شريف", "يونس قادري", "مريم عيساوي", "رامي حداد", "لينا مزيان", "سارة بن يوسف", "أنيس طالبي"];
 export const ME_CHILD = "آدم بوعلام";
 export const PARENT = "كريم بوعلام";
@@ -72,6 +86,7 @@ export type World = {
   reviews: Review[];
   staff: Staff[];
   attendanceSent: boolean;
+  profile?: Profile;
   jobs: Job[];
   applications: Application[];
   gate: Gate[];
@@ -79,16 +94,18 @@ export type World = {
 
 export const VERSION = 6;
 
-export function seed(): World {
+export function seed(profile?: Profile): World {
+  const P = { ...DEFAULT_PROFILE, ...(profile ?? {}) };
   const all = (on: string[]) => Object.fromEntries(PERMS.map((p) => [p, on.includes(p)]));
   return {
     v: VERSION,
+    profile,
     notes: [
       { id: 1, to: "parent", text: "اجتماع الأولياء يوم الخميس على الساعة 16:00", at: "أمس", read: true, tone: "announce" },
       { id: 2, to: "director", text: "طلبان بانتظار موافقتك", at: "صباح اليوم", read: true, tone: "approval" },
     ],
     absences: [
-      { id: 1, pupil: "يونس قادري", date: "أمس", session: "08:00 رياضيات", status: "open" },
+      { id: 1, pupil: "يونس قادري", date: "أمس", session: `08:00 ${P.subject}`, status: "open" },
       { id: 2, pupil: "سارة بن يوسف", date: "أمس", session: "10:00 فيزياء", status: "sent", note: "حمّى — شهادة طبية مرفقة" },
       { id: 3, pupil: "مريم عيساوي", date: "الأحد", session: "اليوم كاملًا", status: "justified", note: "ظرف عائلي" },
     ],
@@ -120,7 +137,7 @@ export function seed(): World {
     ],
     threads: [
       {
-        id: 1, with: "teacher", title: "أ. سميرة مداني — الرياضيات",
+        id: 1, with: "teacher", title: `${P.teacherTitle} ${P.teacher} — ${P.subject}`,
         msgs: [
           { by: "teacher", text: "السلام عليكم، آدم تحسّن كثيرًا في الهندسة هذا الشهر. يحتاج فقط مراجعة الكسور.", at: "الأحد" },
           { by: "parent", text: "شكرًا أستاذة، سنراجعها معه في البيت.", at: "الأحد" },
@@ -129,22 +146,22 @@ export function seed(): World {
       { id: 2, with: "admin", title: "الإدارة — الاستقبال", msgs: [{ by: "admin", text: "مرحبًا، كشف نقاط الفصل الأول متوفر في حسابكم ابتداءً من 15 ديسمبر.", at: "الأسبوع الماضي" }] },
     ],
     homework: [
-      { id: 1, subject: "الرياضيات", text: "تمارين الصفحة 42 (من 1 إلى 4)", due: "الثلاثاء" },
+      { id: 1, subject: P.subject, text: "تمارين الصفحة 42 (من 1 إلى 4)", due: "الثلاثاء" },
       { id: 2, subject: "اللغة الفرنسية", text: "قراءة النص «Le petit prince» وتلخيصه", due: "الخميس" },
     ],
     announcements: [{ id: 1, from: "الإدارة", text: "اجتماع الأولياء يوم الخميس على الساعة 16:00 في قاعة المحاضرات.", at: "أمس" }],
-    exam: { id: 1, title: "الفرض الأول — الرياضيات", published: false, marks: { "آدم بوعلام": "15.5", "إيناس شريف": "17", "يونس قادري": "11", "مريم عيساوي": "13.5", "رامي حداد": "9.5", "لينا مزيان": "16", "سارة بن يوسف": "14", "أنيس طالبي": "12" } },
+    exam: { id: 1, title: `الفرض الأول — ${P.subject}`, published: false, marks: { "آدم بوعلام": "15.5", "إيناس شريف": "17", "يونس قادري": "11", "مريم عيساوي": "13.5", "رامي حداد": "9.5", "لينا مزيان": "16", "سارة بن يوسف": "14", "أنيس طالبي": "12" } },
     sessions: [
-      { id: 1, day: "الأحد", time: "08:00", subject: "الرياضيات", room: "ق 12" },
+      { id: 1, day: "الأحد", time: "08:00", subject: P.subject, room: "ق 12" },
       { id: 2, day: "الأحد", time: "10:00", subject: "اللغة العربية", room: "ق 12" },
       { id: 3, day: "الأحد", time: "13:30", subject: "العلوم الطبيعية", room: "مخبر 2" },
       { id: 4, day: "الإثنين", time: "08:00", subject: "اللغة الفرنسية", room: "ق 12" },
       { id: 5, day: "الإثنين", time: "10:00", subject: "الفيزياء", room: "مخبر 1" },
       { id: 6, day: "الإثنين", time: "13:30", subject: "الإنجليزية", room: "ق 7" },
-      { id: 7, day: "الثلاثاء", time: "08:00", subject: "الرياضيات", room: "ق 12" },
+      { id: 7, day: "الثلاثاء", time: "08:00", subject: P.subject, room: "ق 12" },
       { id: 8, day: "الثلاثاء", time: "10:00", subject: "التاريخ والجغرافيا", room: "ق 12" },
       { id: 9, day: "الأربعاء", time: "08:00", subject: "العلوم الطبيعية", room: "مخبر 2" },
-      { id: 10, day: "الأربعاء", time: "10:00", subject: "الرياضيات", room: "ق 12" },
+      { id: 10, day: "الأربعاء", time: "10:00", subject: P.subject, room: "ق 12" },
       { id: 11, day: "الخميس", time: "08:00", subject: "اللغة العربية", room: "ق 12" },
       { id: 12, day: "الخميس", time: "10:00", subject: "التربية البدنية", room: "الملعب" },
     ],
@@ -163,7 +180,7 @@ export function seed(): World {
       { id: 1, name: "رشيد بلقاسم", job: "مستشار التربية", perms: all(["الغيابات", "الرسائل"]) },
       { id: 2, name: "أمال سعدي", job: "الاستقبال والتسجيلات", perms: all(["التسجيلات"]) },
       { id: 3, name: "نسيم بوزيد", job: "المحاسبة", perms: all(["المستحقات"]) },
-      { id: 4, name: "سميرة مداني", job: "أستاذة الرياضيات", perms: all(["الغيابات", "النقاط", "الرسائل"]) },
+      { id: 4, name: P.teacher, job: `${P.teacherTitle} ${P.subject}`, perms: all(["الغيابات", "النقاط", "الرسائل"]) },
       { id: 5, name: "فريد زروقي", job: "أستاذ الفيزياء", perms: all(["الغيابات", "النقاط"]) },
     ],
     attendanceSent: false,
@@ -206,10 +223,10 @@ export const reducers = {
       let x: World = {
         ...w,
         attendanceSent: true,
-        absences: [...absent.map((p) => ({ id: nid(), pupil: p, date: "اليوم", session: "08:00 رياضيات", status: "open" as const })), ...w.absences],
+        absences: [...absent.map((p) => ({ id: nid(), pupil: p, date: "اليوم", session: `08:00 ${info(w).subject}`, status: "open" as const })), ...w.absences],
       };
-      if (absent.includes(ME_CHILD)) x = notify(x, ["parent"], "غياب آدم اليوم — حصة الرياضيات 08:00. يمكنك إرسال تبرير.", "absence");
-      if (absent.length) x = notify(x, ["supervisor"], `${absent.length} غياب في ${CLASS} (حصة 08:00)`, "absence");
+      if (absent.includes(ME_CHILD)) x = notify(x, ["parent"], `غياب آدم اليوم — حصة ${info(w).subject} 08:00. يمكنك إرسال تبرير.`, "absence");
+      if (absent.length) x = notify(x, ["supervisor"], `${absent.length} غياب في ${info(w).group} (حصة 08:00)`, "absence");
       return x;
     })(w0);
   },
@@ -220,7 +237,7 @@ export const reducers = {
     return ((w: World) => {
       const x = { ...w, exam: { ...w.exam, published: true } };
       const m = w.exam.marks[ME_CHILD];
-      return notify(notify(notify(x, ["parent"], `نقطة آدم في ${w.exam.title}: ${m} / 20`, "grade"), ["student"], `نقطتك في ${w.exam.title}: ${m} / 20`, "grade"), ["director"], `نُشرت نقاط ${w.exam.title} — ${CLASS}`, "grade");
+      return notify(notify(notify(x, ["parent"], `نقطة آدم في ${w.exam.title}: ${m} / 20`, "grade"), ["student"], `نقطتك في ${w.exam.title}: ${m} / 20`, "grade"), ["director"], `نُشرت نقاط ${w.exam.title} — ${info(w).group}`, "grade");
     })(w0);
   },
   addHomework(w0: World, subject: string, text: string, due: string): World {
@@ -239,7 +256,7 @@ export const reducers = {
       const t = w.threads.find((x) => x.id === threadId)!;
       const x = { ...w, threads: map(w.threads, threadId, (th) => ({ ...th, msgs: [...th.msgs, { by, text, at: Date.now() }] })) };
       if (by === "parent") return notify(x, [t.with === "teacher" ? "teacher" : "reception"], `رسالة من وليّ آدم: ${text}`, "message");
-      return notify(x, ["parent"], `رسالة جديدة من ${by === "teacher" ? "أ. سميرة" : "الإدارة"}`, "message");
+      return notify(x, ["parent"], `رسالة جديدة من ${by === "teacher" ? info(w).teacher : "الإدارة"}`, "message");
     })(w0);
   },
   confirmConvocation(w0: World, id: number): World {
@@ -354,7 +371,7 @@ export const reducers = {
       if (a.reqId) {
         const r = x.reqs.find((q) => q.id === a.reqId)!;
         x = { ...x, reqs: map(x.reqs, a.reqId, (q) => ({ ...q, waiting: false, stage: ok ? 3 : q.stage })) };
-        if (r.mine && ok) x = notify(x, ["parent"], `قُبل ${r.child} في ${SCHOOL.name} — أكمل الملف للتسجيل`, "request");
+        if (r.mine && ok) x = notify(x, ["parent"], `قُبل ${r.child} في ${info(w).name} — أكمل الملف للتسجيل`, "request");
       }
       return notify(x, [a.from], `${ok ? "وافق" : "رفض"} المدير: ${a.title}`, "approval");
     })(w0);
@@ -371,7 +388,7 @@ export const reducers = {
 
   // jobs (public board) and hiring (director)
   postJob(w0: World, title: string, kind: Job["kind"], hours: string, note: string): World {
-    return ((w: World) => notify({ ...w, jobs: [{ id: nid(), school: "najah", title, kind, hours, note, open: true }, ...w.jobs] }, ["jobs"], `عرض عمل جديد: ${title} — ${SCHOOL.name}`, "request"))(w0);
+    return ((w: World) => notify({ ...w, jobs: [{ id: nid(), school: "najah", title, kind, hours, note, open: true }, ...w.jobs] }, ["jobs"], `عرض عمل جديد: ${title} — ${info(w).name}`, "request"))(w0);
   },
   applyJob(w0: World, jobId: number, name: string, exp: string): World {
     return ((w: World) => {
@@ -384,7 +401,7 @@ export const reducers = {
     return ((w: World) => {
       const a = w.applications.find((x) => x.id === id)!;
       const x: World = { ...w, applications: map(w.applications, id, (y) => ({ ...y, status: ok ? "interview" : "declined" })) };
-      return notify(x, ["jobs"], ok ? `${a.name}: دُعيت لمقابلة في ${SCHOOL.name}` : `${a.name}: شكرًا لاهتمامك، لم يُقبل الطلب هذه المرة`, "approval");
+      return notify(x, ["jobs"], ok ? `${a.name}: دُعيت لمقابلة في ${info(w).name}` : `${a.name}: شكرًا لاهتمامك، لم يُقبل الطلب هذه المرة`, "approval");
     })(w0);
   },
   closeJob(w0: World, id: number): World {
@@ -430,3 +447,27 @@ export function ago(at: Stamp, now: number) {
 }
 
 
+
+// ------------------------------------------------- profile in the link (?p=)
+const b64 = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+export const encodeProfile = (p: Profile) => b64(new TextEncoder().encode(JSON.stringify(p)));
+export function decodeProfile(s: string | null): Profile | undefined {
+  if (!s) return undefined;
+  try {
+    const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"));
+    const p = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)))) as Partial<Profile>;
+    if (typeof p.name !== "string" || !p.name.trim()) return undefined;
+    // keep only known fields, as plain short values
+    const clean = Object.fromEntries(
+      Object.keys(DEFAULT_PROFILE).map((k) => {
+        const d = DEFAULT_PROFILE[k as keyof Profile];
+        const v = (p as Record<string, unknown>)[k];
+        return [k, typeof d === "number" ? (Number.isFinite(Number(v)) ? Number(v) : d) : typeof v === "string" ? v.slice(0, 160) : d];
+      }),
+    ) as Profile;
+    if (!["school", "language", "training", "support"].includes(clean.kind)) clean.kind = "school";
+    return clean;
+  } catch {
+    return undefined;
+  }
+}

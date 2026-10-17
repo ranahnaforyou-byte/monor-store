@@ -33,7 +33,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cod
   }
   const { action, args } = body;
   if (typeof action !== "string" || !Array.isArray(args)) return NextResponse.json({ error: "bad action" }, { status: 400 });
-  const res = await updateRoom(code, (w) => (action === "reset" ? seed() : applyAction(w, action, args)));
+  const res = await updateRoom(code, (w) => (action === "reset" ? seed(w.profile) : applyAction(w, action, args)));
   if (res === null) return NextResponse.json({ error: "not found" }, { status: 404 });
   if (res === "bad") return NextResponse.json({ error: "unknown action" }, { status: 400 });
   return NextResponse.json(res, { headers: NO_STORE });

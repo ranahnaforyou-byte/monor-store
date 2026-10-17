@@ -3,12 +3,13 @@
 import QRCode from "qrcode";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { ROLES, createRoom, joinRoom, leaveRoom, useSync, type Role } from "./store";
+import { ROLES, createRoom, info, joinRoom, leaveRoom, roleName, useSync, useWorld, type Role } from "./store";
 import { Btn, focus, input, useDemo } from "./ui";
 
 /** «عرض على جهازين»: start or join a shared session, and hand a role to another phone by QR. */
 export function SessionBar({ view }: { view: Role }) {
   const sync = useSync();
+  const S = info(useWorld());
   const { flash } = useDemo();
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
@@ -97,7 +98,7 @@ export function SessionBar({ view }: { view: Role }) {
             <div className="flex flex-wrap gap-1.5">
               {ROLES.filter((r) => r.key !== "directory" && r.key !== "jobs").map((r) => (
                 <button key={r.key} type="button" onClick={() => setOther(r.key)} className={cn("h-9 rounded-full px-3 text-[13px] font-bold", focus, other === r.key ? "bg-[#1F3C88] text-white" : "bg-[#E9EEFB] text-[#1F3C88]")}>
-                  {r.label}
+                  {roleName(r.key, S)}
                 </button>
               ))}
             </div>

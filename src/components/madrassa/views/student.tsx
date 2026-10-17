@@ -2,14 +2,15 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { CLASS, ME_CHILD, SCHOOL, act, ago, useWorld } from "../store";
+import { ME_CHILD, act, ago, useWorld, info } from "../store";
 import { Panel, Pill, RoleHead, card, focus, useDemo } from "../ui";
-import { REPORT } from "./parent";
+import { reportOf } from "./parent";
 
 const DAYS = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
 export function StudentView() {
   const w = useWorld();
+  const S = info(w);
   const { now } = useDemo();
   const [day, setDay] = useState("الأحد");
   const math = w.exam.published ? w.exam.marks[ME_CHILD] : null;
@@ -18,7 +19,7 @@ export function StudentView() {
   return (
     <div className="space-y-4">
       <div className={cn(card, "p-4 sm:p-5")}>
-        <RoleHead name={ME_CHILD} line={`${CLASS} — ${SCHOOL.name}`} tone="bg-[#FEF3DC] text-[#8A5A0B]" />
+        <RoleHead name={ME_CHILD} line={`${S.group} — ${S.name}`} tone="bg-[#FEF3DC] text-[#8A5A0B]" />
       </div>
       {notes.length > 0 && (
         <ul className="space-y-2">
@@ -70,7 +71,7 @@ export function StudentView() {
 
         <Panel title="نقاطي" aside={<Pill tone="gray">الفصل الأول</Pill>}>
           <ul className="grid grid-cols-2 gap-2 text-sm">
-            {REPORT.map(([s, g]) => {
+            {reportOf(S).map(([s, g]) => {
               const v = g ?? math;
               return (
                 <li key={s} className="rounded-xl bg-[#F5F8FF] p-3">

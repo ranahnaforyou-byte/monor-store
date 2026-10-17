@@ -2,22 +2,27 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { ME_CHILD, REQ_STAGES, SCHOOL, act, ago, fmt, useWorld } from "../store";
+import { ME_CHILD, REQ_STAGES, act, ago, fmt, useWorld, info , type Profile } from "../store";
 import { Btn, Empty, Panel, Pill, RoleHead, Tabs, NoteCard, card, focus, input, useDemo } from "../ui";
 import { schoolName } from "./directory";
 
-const KIDS = [
-  { id: "adam", name: "آدم", school: SCHOOL.name, cls: "4 متوسط — أ", live: true },
+const kidsOf = (S: Profile) => [
+  { id: "adam", name: "آدم", school: S.name, cls: S.group, live: true },
   { id: "salma", name: "سلمى", school: "مدرسة المستقبل", cls: "3 ابتدائي — ب", live: false },
   { id: "rayan", name: "ريان", school: "مركز آفاق للغات", cls: "إنجليزية B1 — مسائي", live: false },
 ];
 
-export const REPORT = [
-  ["اللغة العربية", "14.5"], ["الرياضيات", null], ["اللغة الفرنسية", "12"], ["الإنجليزية", "15"], ["الفيزياء", "13"], ["العلوم الطبيعية", "16"], ["التاريخ والجغرافيا", "14"],
-] as const;
+/** Report card rows; the live subject is the one the teacher publishes (null until then). */
+export const reportOf = (S: Profile): [string, string | null][] => {
+  if (S.kind !== "school") return [[S.subject, null], ["التطبيق العملي", "15"], ["المواظبة", "17"], ["مشروع نهاية التكوين", "14"]];
+  const rows: [string, string | null][] = [["اللغة العربية", "14.5"], ["الرياضيات", "13"], ["اللغة الفرنسية", "12"], ["الإنجليزية", "15"], ["الفيزياء", "13"], ["العلوم الطبيعية", "16"]];
+  const out = rows.map(([n, g]): [string, string | null] => [n, n === S.subject ? null : g]);
+  return out.some(([n]) => n === S.subject) ? out : [[S.subject, null], ...out];
+};
 
 export function ParentView() {
   const w = useWorld();
+  const S = info(w);
   const { flash, now } = useDemo();
   const [kid, setKid] = useState("adam");
   const [tab, setTab] = useState<"today" | "grades" | "fees" | "messages" | "school">("today");
@@ -37,6 +42,7 @@ export function ParentView() {
   const convs = w.convocations.filter((c) => c.pupil === ME_CHILD);
   const openAbs = absences.filter((a) => a.status === "open").length;
   const dueFees = fees.filter((f) => f.status === "due" || f.status === "late").length;
+  const KIDS = kidsOf(S);
   const k = KIDS.find((x) => x.id === kid)!;
   const th = w.threads.find((t) => t.id === thread)!;
   const math = w.exam.published ? w.exam.marks[ME_CHILD] : null;
@@ -60,7 +66,7 @@ export function ParentView() {
         <Panel title={`${k.name} — ${k.school}`}>
           <p className="text-sm text-[#13294B]/70">{k.cls}</p>
           <p className="mt-3 rounded-xl bg-[#F5F8FF] p-3 text-sm">
-            كل مؤسسة تنشر لأبنائك في نفس الحساب: غيابات، نقاط، مستحقات ورسائل. في هذا العرض، الروابط الحية مفعّلة مع {SCHOOL.name} (آدم).
+            كل مؤسسة تنشر لأبنائك في نفس الحساب: غيابات، نقاط، مستحقات ورسائل. في هذا العرض، الروابط الحية مفعّلة مع {S.name} (آدم).
           </p>
           <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
             <div className="rounded-xl bg-[#E7F6EF] p-3"><p className="text-[#0A7554]">مستحقات أكتوبر</p><p className="font-bold">مؤكدة</p></div>
@@ -149,12 +155,12 @@ export function ParentView() {
               <Panel title="كشف النقاط — الفصل الأول" aside={<Pill tone="gray">مؤقت</Pill>}>
                 <table className="w-full text-sm">
                   <tbody className="divide-y divide-[#1F3C88]/10">
-                    {REPORT.map(([s, g]) => {
+                    {reportOf(S).map(([s, g]) => {
                       const v = g ?? math;
                       return (
                         <tr key={s}>
                           <td className="py-2.5">{s}</td>
-                          <td className={cn("num py-2.5 text-end font-bold", !v && "text-[#13294B]/55", s === "الرياضيات" && math && "text-[#0A7554]")}>{v ? `${v} / 20` : "لم تُنشر"}</td>
+                          <td className={cn("num py-2.5 text-end font-bold", !v && "text-[#13294B]/55", s === S.subject && math && "text-[#0A7554]")}>{v ? `${v} / 20` : "لم تُنشر"}</td>
                         </tr>
                       );
                     })}
@@ -281,7 +287,7 @@ export function ParentView() {
                 ) : (
                   myReqs.map((r) => (
                     <div key={r.id} className="mt-1 mb-4">
-                      <p className="text-sm font-bold">{r.child} — {schoolName(r.school)}</p>
+                      <p className="text-sm font-bold">{r.child} — {schoolName(r.school, S)}</p>
                       <ol className="mt-2 grid grid-cols-5 gap-1 text-center text-[10px] font-bold sm:text-[11px]">
                         {REQ_STAGES.map((st, i) => (
                           <li key={st} className={cn("rounded-lg px-0.5 py-1.5", i <= r.stage ? "bg-[#0A7554] text-white" : "bg-[#F5F8FF] text-[#13294B]/55")}>{st}</li>
@@ -293,7 +299,7 @@ export function ParentView() {
                   ))
                 )}
               </Panel>
-              <Panel title={`قيّم ${SCHOOL.name}`} aside={<Pill tone="green">ابنك مسجّل</Pill>}>
+              <Panel title={`قيّم ${S.name}`} aside={<Pill tone="green">ابنك مسجّل</Pill>}>
                 <form onSubmit={(e) => { e.preventDefault(); if (!review.trim()) return; act.review(stars, review.trim()); setReview(""); flash("نُشر تقييمك في الدليل — المدرسة تردّ ولا تحذف"); }}>
                   <div className="flex gap-1" role="radiogroup" aria-label="عدد النجوم">
                     {[1, 2, 3, 4, 5].map((n) => (

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { FILES, REQ_STAGES, SCHOOL, act, useWorld } from "../store";
+import { FILES, REQ_STAGES, act, useWorld, info } from "../store";
 import { Btn, Panel, Pill, RoleHead, Tabs, card, input, useDemo } from "../ui";
 
 const COLS = [
@@ -15,6 +15,7 @@ const COLS = [
 
 export function ReceptionView() {
   const w = useWorld();
+  const S = info(w);
   const { flash } = useDemo();
   const [tab, setTab] = useState<"pipeline" | "appts" | "messages">("pipeline");
   const [who, setWho] = useState("كريم بوعلام");
@@ -28,7 +29,7 @@ export function ReceptionView() {
   return (
     <div className="space-y-4">
       <div className={cn(card, "p-4 sm:p-5")}>
-        <RoleHead name="أمال سعدي" line={`الاستقبال والتسجيلات — ${SCHOOL.name}`} />
+        <RoleHead name="أمال سعدي" line={`الاستقبال والتسجيلات — ${S.name}`} />
       </div>
       <Tabs value={tab} onChange={setTab} items={[["pipeline", "طلبات التسجيل", fresh], ["appts", "مواعيد الأولياء"], ["messages", "رسائل الأولياء", t.msgs[t.msgs.length - 1]?.by === "parent" ? 1 : 0]]} />
 

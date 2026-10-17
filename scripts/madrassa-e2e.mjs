@@ -179,5 +179,19 @@ ok((await api(`/0000`)).status === 404, "missing session → 404");
 await send("director", "reset");
 ok(w().absences.every((a) => a.date !== "اليوم") && w().jobs.length === 5, "reset brings every phone back to the demo start");
 
+console.log("\nCustom institution (profile) session");
+const QALAM = { name: "مركز القلم للتكوين", area: "الرويبة", kind: "training", levels: "إعلام آلي، محاسبة", group: "إعلام آلي — فوج أ", teacher: "يوسف بن عمر", teacherTitle: "المكوّن", learnerTitle: "المتربّص", subject: "الإعلام الآلي", fee: 7000, regFee: 3000, length: "3 إلى 6 أشهر", diploma: "شهادة تكوين", hours: "صباحي ومسائي", pupils: 140 };
+const c2 = await api("", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ profile: QALAM }) });
+const room2 = c2.body.code;
+const post2 = (action, ...args) => api(`/${room2}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action, args }) });
+let w2 = (await api(`/${room2}?v=0`)).body.world;
+ok(w2.profile?.name === QALAM.name && w2.exam.title.includes("الإعلام الآلي"), "session starts with the institution's own name and subject");
+w2 = (await post2("sendAttendance", [ADAM])).body.world;
+ok(w2.notes.some((n) => n.to === "supervisor" && n.text.includes("إعلام آلي — فوج أ")), "notes use the institution's group name");
+ok(w2.notes.some((n) => n.to === "parent" && n.text.includes("حصة الإعلام الآلي")), "parent alert uses the institution's subject");
+w2 = (await post2("reset")).body.world;
+ok(w2.profile?.name === QALAM.name && w2.absences.every((a) => a.date !== "اليوم"), "reset keeps the institution");
+ok((await api("", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ profile: { name: "", kind: "x" } }) })).status === 200, "bad profile falls back safely");
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);

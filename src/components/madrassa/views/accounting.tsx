@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import { SCHOOL, act, fmt, useWorld, type Fee } from "../store";
+import { act, fmt, useWorld, type Fee, info } from "../store";
 import { Avatar, Btn, Panel, Pill, RoleHead, Stat, Tabs, card, useDemo } from "../ui";
 
 const LABEL: Record<Fee["status"], [string, "green" | "amber" | "red" | "gray"]> = {
@@ -14,6 +14,7 @@ const LABEL: Record<Fee["status"], [string, "green" | "amber" | "red" | "gray"]>
 
 export function AccountingView() {
   const w = useWorld();
+  const S = info(w);
   const { flash } = useDemo();
   const [tab, setTab] = useState<"receipts" | "late" | "all">("receipts");
   const receipts = w.fees.filter((f) => f.status === "receipt");
@@ -35,7 +36,7 @@ export function AccountingView() {
   return (
     <div className="space-y-4">
       <div className={cn(card, "p-4 sm:p-5")}>
-        <RoleHead name="نسيم بوزيد" line={`المحاسبة — ${SCHOOL.name}`} />
+        <RoleHead name="نسيم بوزيد" line={`المحاسبة — ${S.name}`} />
       </div>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat icon="money" label="محصّل (القائمة)" value={fmt(sum(w.fees.filter((f) => f.status === "confirmed")))} tone="green" />

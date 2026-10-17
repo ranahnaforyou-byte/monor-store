@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { CLASS, PUPILS, SCHOOL, act, ago, useWorld } from "../store";
+import { PUPILS, act, ago, useWorld, info } from "../store";
 import { Avatar, Btn, Panel, Pill, RoleHead, Stat, Tabs, card, input, useDemo } from "../ui";
 
 const CHANGES = ["ملغاة — غياب الأستاذ", "معوّضة السبت 09:00", "القاعة تغيّرت إلى ق 3"];
 
 export function SupervisorView() {
   const w = useWorld();
+  const S = info(w);
   const { flash, now } = useDemo();
   const [tab, setTab] = useState<"gate" | "absences" | "discipline" | "schedule" | "messages">("absences");
   const [pupil, setPupil] = useState(PUPILS[0]);
@@ -32,7 +33,7 @@ export function SupervisorView() {
   return (
     <div className="space-y-4">
       <div className={cn(card, "p-4 sm:p-5")}>
-        <RoleHead name="رشيد بلقاسم" line={`مستشار التربية — ${SCHOOL.name}`} />
+        <RoleHead name="رشيد بلقاسم" line={`مستشار التربية — ${S.name}`} />
       </div>
       <div className="grid grid-cols-3 gap-3">
         <Stat icon="doc" label="تبريرات للمراجعة" value={sent.length} tone="amber" />
@@ -101,7 +102,7 @@ export function SupervisorView() {
       )}
 
       {tab === "gate" && (
-        <Panel title={`البوابة — ${CLASS}، اليوم`} aside={alerts ? <Pill tone="red">{alerts} للتحقق</Pill> : <Pill tone="green">كل شيء مطابق</Pill>}>
+        <Panel title={`البوابة — ${S.group}، اليوم`} aside={alerts ? <Pill tone="red">{alerts} للتحقق</Pill> : <Pill tone="green">كل شيء مطابق</Pill>}>
           <p className="mb-3 text-[13px] text-[#13294B]/70">الحارس يسجّل الدخول والخروج (بالبطاقة أو بالاسم)، والنظام يقارنه بحضور القسم. الولي يُنبَّه عند دخول ابنه وخروجه.</p>
           <ul className="space-y-2">
             {gateRows.map(({ p, g, absentInClass, flag }) => (
@@ -132,7 +133,7 @@ export function SupervisorView() {
 
       {tab === "schedule" && (
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-          <Panel title={`استعمال زمن ${CLASS}`}>
+          <Panel title={`استعمال زمن ${S.group}`}>
             <ul className="grid gap-2 sm:grid-cols-2">
               {w.sessions.map((s) => (
                 <li key={s.id} className={cn("rounded-xl p-2.5 text-sm", s.change ? "bg-[#FEF3DC]" : "bg-[#F5F8FF]")}>
