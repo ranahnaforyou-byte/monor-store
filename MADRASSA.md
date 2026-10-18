@@ -87,6 +87,8 @@
 - **دالي إبراهيم / الشراقة:** Wall Street English دالي إبراهيم، Global Center for Training & Consultations، Greenfield International School، École Internationale Algiers.
 - **بن عكنون:** مدرسة مشكاة (لغات وإعلام آلي)، مركز التكوين ببن عكنون (CBA).
 - **الرويبة:** ETAFORD (معتمدة، لغات وQHSE)، IFACT (QHSE وموارد بشرية)، Noramens، Midad Formation.
+- **نسخ العرض الجاهزة** (رابط `/madrassa?school=<key>`، أسماء وهمية):
+  معالي ← `najah` · إكرام ← `rouad` · الحكمة ← `itqan` · ندام ← `fajr` · ETAFORD ← `riyada` · IFACT ← `kafaa` · Midad ← `qalam` · مشكاة ← `maarifa` · ALC ← `jisr` · الأمل ← `nokhba`.
 - **بودواو:** مدارس لغات معروضة على Ouedkniss بلا تأكيد. لم أجد على الإنترنت مدرسة حلاقة معتمدة هناك، فالزيارة الميدانية ضرورية.
 
 ## الأسعار — مقترح للنقاش (لم يُعتمد بعد)

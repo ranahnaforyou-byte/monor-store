@@ -110,14 +110,14 @@ export function seed(profile?: Profile): World {
       { id: 3, pupil: "مريم عيساوي", date: "الأحد", session: "اليوم كاملًا", status: "justified", note: "ظرف عائلي" },
     ],
     fees: [
-      { id: 1, pupil: "آدم بوعلام", month: "أكتوبر", amount: 18000, status: "due" },
-      { id: 2, pupil: "يونس قادري", month: "أكتوبر", amount: 18000, status: "receipt", method: "بريدي موب" },
-      { id: 3, pupil: "لينا مزيان", month: "أكتوبر", amount: 18000, status: "receipt", method: "CCP" },
-      { id: 4, pupil: "مريم عيساوي", month: "سبتمبر", amount: 18000, status: "late" },
-      { id: 5, pupil: "أنيس طالبي", month: "سبتمبر", amount: 18000, status: "late" },
-      { id: 6, pupil: "رامي حداد", month: "أكتوبر", amount: 18000, status: "confirmed", method: "نقدًا" },
-      { id: 7, pupil: "سارة بن يوسف", month: "أكتوبر", amount: 18000, status: "confirmed", method: "بريدي موب" },
-      { id: 8, pupil: "إيناس شريف", month: "أكتوبر", amount: 18000, status: "due" },
+      { id: 1, pupil: "آدم بوعلام", month: "أكتوبر", amount: P.fee, status: "due" },
+      { id: 2, pupil: "يونس قادري", month: "أكتوبر", amount: P.fee, status: "receipt", method: "بريدي موب" },
+      { id: 3, pupil: "لينا مزيان", month: "أكتوبر", amount: P.fee, status: "receipt", method: "CCP" },
+      { id: 4, pupil: "مريم عيساوي", month: "سبتمبر", amount: P.fee, status: "late" },
+      { id: 5, pupil: "أنيس طالبي", month: "سبتمبر", amount: P.fee, status: "late" },
+      { id: 6, pupil: "رامي حداد", month: "أكتوبر", amount: P.fee, status: "confirmed", method: "نقدًا" },
+      { id: 7, pupil: "سارة بن يوسف", month: "أكتوبر", amount: P.fee, status: "confirmed", method: "بريدي موب" },
+      { id: 8, pupil: "إيناس شريف", month: "أكتوبر", amount: P.fee, status: "due" },
     ],
     reqs: [
       { id: 11, child: "أنس بن علي", parent: "علي بن علي", level: "1 متوسط", school: "najah", stage: 0, files: { [FILES[0]]: true, [FILES[1]]: false, [FILES[2]]: false, [FILES[3]]: false } },
@@ -288,7 +288,7 @@ export const reducers = {
       let x: World = { ...w, reqs: map(w.reqs, id, (q) => ({ ...q, stage, slot: stage === 2 ? "الأحد 09:30" : q.slot })) };
       if (stage === 2) x = { ...x, appts: [...x.appts, { id: nid(), who: r.parent, when: "الأحد 09:30", why: `اختبار مستوى ${r.child}` }] };
       if (stage === 4) {
-        x = { ...x, fees: [{ id: nid(), pupil: r.child, month: "أكتوبر", amount: 18000, status: "due" }, ...x.fees] };
+        x = { ...x, fees: [{ id: nid(), pupil: r.child, month: "أكتوبر", amount: info(x).fee, status: "due" }, ...x.fees] };
         x = notify(x, ["accounting"], `تلميذ جديد مسجّل: ${r.child} — أُضيفت مستحقاته`, "fee");
         x = notify(x, ["director"], `تسجيل جديد: ${r.child} (${r.level})`, "request");
       }
