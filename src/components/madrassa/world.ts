@@ -61,6 +61,8 @@ export type Session = { id: number; day: string; time: string; subject: string; 
 export type Review = { id: number; school: string; by: string; student?: boolean; stars: number; text: string; reply?: string; at: Stamp };
 export type Job = { id: number; school: string; title: string; kind: "تدريس" | "إدارة" | "حراسة" | "نظافة"; hours: string; note: string; open: boolean };
 export type Application = { id: number; jobId: number; name: string; exp: string; status: "new" | "interview" | "declined"; at: Stamp };
+/** A job seeker's own service profile, published with their consent; the phone stays hidden. */
+export type Talent = { id: number; name: string; title: string; kind: Job["kind"]; levels: string; exp: string; diploma: string; areas: string; mode: string; invited?: boolean; mine?: boolean; at: Stamp };
 export type Gate = { pupil: string; in?: string; out?: string };
 export type Staff = { id: number; name: string; job: string; perms: Record<string, boolean> };
 
@@ -89,10 +91,11 @@ export type World = {
   profile?: Profile;
   jobs: Job[];
   applications: Application[];
+  talents: Talent[];
   gate: Gate[];
 };
 
-export const VERSION = 6;
+export const VERSION = 7;
 
 export function seed(profile?: Profile): World {
   const P = { ...DEFAULT_PROFILE, ...(profile ?? {}) };
@@ -192,6 +195,16 @@ export function seed(profile?: Profile): World {
       { id: 5, school: "ofoq", title: "مسؤول(ة) استقبال وتسجيلات", kind: "إدارة", hours: "دوام كامل", note: "العربية والفرنسية، حسن التعامل مع الأولياء", open: true },
     ],
     applications: [{ id: 1, jobId: 1, name: "ليلى حمّادي", exp: "4 سنوات في مدرسة خاصة ببن عكنون", status: "new", at: "أمس" }],
+    talents: [
+      { id: 1, name: "سليم عيادي", title: "أستاذ رياضيات", kind: "تدريس", levels: "ابتدائي ومتوسط", exp: "6 سنوات، منها 3 في مدرسة خاصة", diploma: "ليسانس رياضيات + شهادة PES", areas: "باب الزوار، الدار البيضاء", mode: "دوام كامل", at: "أمس" },
+      { id: 2, name: "هدى بن شيخ", title: "أستاذة فيزياء", kind: "تدريس", levels: "ثانوي (تحضير البكالوريا)", exp: "8 سنوات في التعليم العمومي", diploma: "ماستر فيزياء", areas: "حيدرة، بن عكنون", mode: "دوام جزئي ودروس دعم", at: "أمس" },
+      { id: 3, name: "ياسمين قرومي", title: "مكوّنة إنجليزية", kind: "تدريس", levels: "كبار، IELTS وTOEFL", exp: "5 سنوات في مراكز لغات", diploma: "ماستر إنجليزية + CELTA", areas: "حيدرة، دالي إبراهيم", mode: "مسائي وعطلة الأسبوع", at: "منذ يومين" },
+      { id: 4, name: "عمر بلحاج", title: "مكوّن QHSE", kind: "تدريس", levels: "تكوين مهني، تكوين داخل المؤسسات", exp: "10 سنوات في مؤسسة صناعية بالرويبة", diploma: "مهندس دولة + ISO 45001 Lead Auditor", areas: "الرويبة، رغاية", mode: "دوام جزئي", at: "منذ يومين" },
+      { id: 5, name: "صبرينة حداد", title: "أستاذة فرنسية", kind: "تدريس", levels: "ابتدائي، متوسط، كبار A1–B2", exp: "4 سنوات", diploma: "ليسانس فرنسية", areas: "بن عكنون، باب الزوار", mode: "دوام كامل أو جزئي", at: "هذا الأسبوع" },
+      { id: 6, name: "مهدي قاسي", title: "مكوّن إعلام آلي", kind: "تدريس", levels: "مكتبيات، Excel متقدم، أساسيات البرمجة", exp: "3 سنوات في مركز تكوين", diploma: "ليسانس إعلام آلي", areas: "الرويبة، باب الزوار", mode: "مسائي", at: "هذا الأسبوع" },
+      { id: 7, name: "عبد القادر مرابط", title: "حارس", kind: "حراسة", levels: "مؤسسات تعليمية", exp: "7 سنوات حراسة مدرسة", diploma: "سجل عدلي نظيف", areas: "الدار البيضاء، باب الزوار", mode: "ليلي", at: "هذا الأسبوع" },
+      { id: 8, name: "فتيحة عمارة", title: "عاملة نظافة", kind: "نظافة", levels: "مدارس ومراكز", exp: "5 سنوات", diploma: "—", areas: "حيدرة، بن عكنون", mode: "صباحي", at: "هذا الأسبوع" },
+    ],
     gate: [
       { pupil: "إيناس شريف", in: "07:41" },
       { pupil: "يونس قادري" },
@@ -402,6 +415,15 @@ export const reducers = {
       const a = w.applications.find((x) => x.id === id)!;
       const x: World = { ...w, applications: map(w.applications, id, (y) => ({ ...y, status: ok ? "interview" : "declined" })) };
       return notify(x, ["jobs"], ok ? `${a.name}: دُعيت لمقابلة في ${info(w).name}` : `${a.name}: شكرًا لاهتمامك، لم يُقبل الطلب هذه المرة`, "approval");
+    })(w0);
+  },
+  postTalent(w0: World, t: Omit<Talent, "id" | "at" | "mine" | "invited">): World {
+    return ((w: World) => notify({ ...w, talents: [{ ...t, id: nid(), at: Date.now(), mine: true }, ...w.talents] }, ["director"], `ملف جديد في «الباحثون عن عمل»: ${t.name} — ${t.title}`, "request"))(w0);
+  },
+  inviteTalent(w0: World, id: number): World {
+    return ((w: World) => {
+      const t = w.talents.find((x) => x.id === id)!;
+      return notify({ ...w, talents: map(w.talents, id, (x) => ({ ...x, invited: true })) }, ["jobs"], `${t.name}: ${info(w).name} تطلب مقابلة معك — ستتصل بك المؤسسة`, "approval");
     })(w0);
   },
   closeJob(w0: World, id: number): World {

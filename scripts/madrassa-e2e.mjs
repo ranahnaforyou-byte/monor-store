@@ -150,6 +150,11 @@ await send("director", "decideApplication", app.id, true);
 ok(got("jobs", "دُعيت لمقابلة"), "job seeker: invited to interview");
 await send("director", "postJob", "أستاذ رياضيات", "تدريس", "دوام كامل", "ليسانس");
 ok(got("jobs", "عرض عمل جديد"), "jobs board: new offer published");
+await send("jobs", "postTalent", { name: "ليلى حمّادي", title: "أستاذة علوم", kind: "تدريس", levels: "متوسط", exp: "4 سنوات", diploma: "ماستر", areas: "حيدرة", mode: "دوام كامل" });
+ok(got("director", "ملف جديد"), "director phone: job seeker's service profile");
+const tal = w().talents.find((t) => t.mine);
+await send("director", "inviteTalent", tal.id);
+ok(got("jobs", "تطلب مقابلة معك"), "job seeker: institution asked for an interview");
 
 console.log("\nReview (verified parent) → director reply");
 await send("parent", "review", 5, "متابعة ممتازة");

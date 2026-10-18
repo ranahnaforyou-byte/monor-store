@@ -21,12 +21,16 @@ export function DirectorView() {
   const [job, setJob] = useState({ title: "أستاذ(ة) رياضيات — المتوسط", kind: "تدريس" as Job["kind"], hours: "دوام كامل", note: "ليسانس رياضيات، خبرة سنة على الأقل" });
   const [ann, setAnn] = useState("العطلة تبدأ الخميس بعد آخر حصة. استئناف الدراسة الأحد 3 نوفمبر.");
   const [reply, setReply] = useState<Record<number, string>>({});
+  const [find, setFind] = useState("");
 
   const confirmed = w.fees.filter((f) => f.status === "confirmed").reduce((a, b) => a + b.amount, 0);
   const late = w.fees.filter((f) => f.status === "late");
   const myJobs = w.jobs.filter((j) => j.school === "najah");
   const apps = w.applications.filter((a) => myJobs.some((j) => j.id === a.jobId));
-  const newApps = apps.filter((a) => a.status === "new").length;
+  const newTalents = w.talents.filter((t) => t.mine && !t.invited).length;
+  const newApps = apps.filter((a) => a.status === "new").length + newTalents;
+  const q = find.trim();
+  const found = w.talents.filter((t) => !q || [t.title, t.levels, t.areas, t.mode].some((f) => f.includes(q)));
   const pending = w.approvals.filter((a) => a.status === "pending");
   const today = w.absences.filter((a) => a.date === "اليوم");
   const enrolled = w.reqs.filter((r) => r.stage === 4).length;
@@ -148,6 +152,7 @@ export function DirectorView() {
 
       {tab === "hiring" && (
         <div className="grid gap-4 lg:grid-cols-2">
+          <div className="space-y-4">
           <Panel title="الطلبات الواردة">
             {apps.length === 0 ? (
               <p className="text-sm text-[#13294B]/70">لا طلبات بعد. تصل هنا من فضاء «عروض العمل».</p>
@@ -171,6 +176,25 @@ export function DirectorView() {
               </ul>
             )}
           </Panel>
+          <Panel title="ابحث عن مرشحين" aside={<Pill tone="blue">{w.talents.length} ملف</Pill>}>
+            <input value={find} onChange={(e) => setFind(e.target.value)} placeholder="تخصص أو حي: رياضيات، IELTS، الرويبة…" aria-label="ابحث في الملفات" className={cn(input, "w-full")} />
+            <ul className="mt-2 max-h-[28rem] space-y-2 overflow-y-auto">
+              {found.length === 0 && <li className="text-sm text-[#13294B]/70">لا ملف يطابق بحثك.</li>}
+              {found.map((t) => (
+                <li key={t.id} className={cn("rounded-2xl p-3", t.mine && !t.invited ? "bg-[#FFF8E6] ring-1 ring-[#F5A524]/40" : "bg-[#F5F8FF]")}>
+                  <p className="text-sm font-bold">{t.name} — {t.title}</p>
+                  <p className="text-[13px] text-[#13294B]/70">{t.levels} · {t.exp}</p>
+                  <p className="text-[12px] text-[#13294B]/70">{t.diploma} · {t.areas} · {t.mode}</p>
+                  {t.invited ? (
+                    <Pill tone="green" className="mt-2">طُلبت المقابلة</Pill>
+                  ) : (
+                    <Btn size="sm" tone="green" className="mt-2 w-full" onClick={() => { act.inviteTalent(t.id); flash(`أُرسل طلب المقابلة إلى ${t.name}`); }}>اطلب مقابلة</Btn>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </Panel>
+          </div>
           <div className="space-y-4">
             <Panel title="انشر عرض عمل">
               <form className="space-y-2" onSubmit={(e) => { e.preventDefault(); if (!job.title.trim()) return; act.postJob(job.title.trim(), job.kind, job.hours.trim(), job.note.trim()); flash("نُشر العرض في فضاء «عروض العمل»"); }}>
