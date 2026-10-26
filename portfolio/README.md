@@ -11,15 +11,11 @@
 | `script.js` | **وسائل التواصل** في أعلى الملف، وتبويبات أدوار MA DRASSA |
 | `assets/` | الشعار وأيقونة الموقع وصورة المشاركة |
 
-## لقطات الشاشة
+## الصور
 
-ضع الصور في `assets/` بهذه الأسماء، وتظهر تلقائياً مكان الإطار الفارغ:
-
-- `assets/madrassa.png`
-- `assets/hanout.png`
-- `assets/editor.png`
-
-الأفضل نسبة 4:3 (مثلاً 1200×900). صورة المونتير 16:10.
+- `assets/madrassa.jpg` و `assets/hanout.jpg`: لقطات حقيقية من كود فرع `expo-demo` (لوحة المدير، والصفحة الرئيسية لحانوت).
+- `assets/hero-*.jpg` و `assets/identity-*.jpg` و `assets/og.jpg`: من صور هوية EVEREST.
+- بورتفوليو المونتير: لا توجد لقطة بعد، تظهر بطاقة رابط بدلها. لإضافة لقطة، ضع `<figure class="shot"><img src="assets/editor.jpg" …></figure>` مكان `<a class="linkcard">`.
 
 ## وسائل التواصل
 
@@ -30,7 +26,7 @@
 - **Cloudflare Pages:** Create project ← اختر هذا الـ repo والفرع ← Framework: None ← Build command: فارغ ← Build output directory: `portfolio`.
 - **Vercel:** New Project ← نفس الـ repo ← Root Directory: `portfolio` ← Framework: Other.
 
-بعد النشر، غيّر `og:image` في `index.html` إلى الرابط الكامل (مثلاً `https://your-domain/assets/og.png`) حتى تظهر صورة المعاينة عند مشاركة الرابط.
+بعد النشر، غيّر `og:image` في `index.html` إلى الرابط الكامل (مثلاً `https://your-domain/assets/og.jpg`) حتى تظهر صورة المعاينة عند مشاركة الرابط.
 
 ## روابط ممنوعة
 
