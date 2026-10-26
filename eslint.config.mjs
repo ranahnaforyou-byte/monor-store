@@ -13,6 +13,7 @@ const eslintConfig = defineConfig([
     "src/generated/**",
     "scripts/_shim/**",
     "public/**",
+    "portfolio/**",
   ]),
 ]);
 
