@@ -1,6 +1,6 @@
 # Everest — client work
 
-Smaller delivered projects for clients. Big platforms (Student Job, MA DRASSA, Hanout, SHDZ, ENP Incubator Hub) are left out on purpose.
+Smaller delivered projects for clients. Big platforms (Student Job, MA DRASSA, Hanout, SHDZ) are left out on purpose.
 
 | Project | Client type | Service | Status | Images |
 |---|---|---|---|---|
@@ -9,6 +9,7 @@ Smaller delivered projects for clients. Big platforms (Student Job, MA DRASSA, H
 | Video editor portfolio | Video editor / videographer, Algiers | Portfolio website | Live: bywassimsemah.pages.dev | `wassim/` (real screenshots) |
 | VoltRacing | Racing team | Video, social media plan, logo | Delivered | `voltracing/voltracing-card.png` (presentation card) |
 | BN Electric | Electrical manufacturer, Algeria | Business studies | Delivered | `bn-electric/bn-electric-card.png` (presentation card) |
+| ENP Incubator Hub | Startup incubator, École Nationale Polytechnique | Web platform | Prototype, online demo | `enp/enp-card.png` (presentation card) |
 
 ## Details
 
@@ -22,8 +23,11 @@ Smaller delivered projects for clients. Big platforms (Student Job, MA DRASSA, H
 
 **BN Electric:** Market study for Algeria (with ZPO), potential client list, partnership proposal, legal and tax study for setting up ZPO in Algeria, business plan and audit for a hot-dip galvanizing plant in Boughezoul.
 
+**ENP Incubator Hub:** Portal for the ENP incubator with separate roles (director, deputy, admin, incubator head, students), requests, messaging and a private network. Test version: https://enp-incubator-hub-sedjal.sedjal152.chatgpt.site/ (not checked from here; it is a test version, not the school's official portal).
+
 ## Before publishing
 
 - Get each client's OK before showing their name, logo or work publicly.
 - BN Electric documents may be confidential: show the type of work, not the content.
-- The two cards are presentation cards made for the portfolio, not screenshots of the deliverables.
+- Student data from the incubator must never appear in screenshots.
+- The three cards are presentation cards made for the portfolio, not screenshots of the deliverables.
